@@ -1,0 +1,21 @@
+{
+  "synthetic_only": true,
+  "live_database_modified": false,
+  "browser_workflow_verified": true,
+  "closed_period_edit_rejected": true,
+  "unresolved_close_requires_explicit_ack": true,
+  "snapshot_v1_minutes": 480,
+  "snapshot_v2_worked_seconds": null,
+  "raw_events_preserved": 1,
+  "revoked_adjustment_history_preserved": true,
+  "v1_and_v2_retained": true,
+  "v2_xlsx_missing_values_blank": true,
+  "audit_action_counts": {
+    "admin_login": 1,
+    "attendance_adjustment_create": 1,
+    "attendance_adjustment_revoke": 1,
+    "timesheet_period_lock": 2,
+    "timesheet_period_reopen": 1
+  },
+  "cleanup_completed": true
+}

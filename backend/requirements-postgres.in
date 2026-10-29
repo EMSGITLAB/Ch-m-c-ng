@@ -1,0 +1,2 @@
+# Optional future PostgreSQL support; not used by the current application.
+psycopg[binary]>=3.2,<4

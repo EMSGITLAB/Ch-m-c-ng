@@ -1,0 +1,10 @@
+{
+  "method": "DOM measurements of the real local webapp inside controlled same-origin iframe viewports",
+  "camera_started": false,
+  "tablet_hardware_test": false,
+  "measurements": [
+    {"requested_width": 768, "requested_height": 1024, "content_width": 768, "document_width": 768, "camera_width": 334.9375, "camera_height": 251.1999969482422, "ratio": 1.3333499365806571, "horizontal_overflow": false},
+    {"requested_width": 1024, "requested_height": 768, "content_width": 1009, "document_width": 1009, "camera_width": 413.5500183105469, "camera_height": 310.1625061035156, "ratio": 1.3333333661307407, "horizontal_overflow": false},
+    {"requested_width": 390, "requested_height": 1024, "content_width": 375, "document_width": 375, "camera_width": 309.6000061035156, "camera_height": 232.1999969482422, "ratio": 1.3333333771426623, "horizontal_overflow": false}
+  ]
+}

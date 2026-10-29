@@ -1,0 +1,21 @@
+{
+  "backend_native_restart_completed": true,
+  "readiness": {
+    "ready": true,
+    "database": true,
+    "recognition": true,
+    "attendance_enabled": true,
+    "reason": null
+  },
+  "source_files_sha256": {
+    "backend/app/recognition_api.py": "785473a19d509ef6fe6e43d28f87a3d0469fda635ff9d327be766e8760a3d816",
+    "backend/app/attendance_api.py": "973c437f035143f591d58a5b9b815eceb61ffd1b5e805eb7dd769da3da3691fd",
+    "backend/app/recognition_sequence.py": "e0c8761c6fdd2b3e97a74d482749b052d42387712450afa8e856e675f1fdb6e9",
+    "frontend/src/kioskFlow.ts": "1929ec6c7da0538f7739cf5b709b7819f882e4671073783bbc7b31b0f050f0e0"
+  },
+  "backup_before_restart_encrypted_and_external": true,
+  "live_business_configuration_modified": false,
+  "models_or_thresholds_modified": false,
+  "synthetic_attendance_written_to_live_database": false,
+  "physical_reboot_test_completed": false
+}

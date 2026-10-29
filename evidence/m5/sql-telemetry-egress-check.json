@@ -1,0 +1,14 @@
+{
+  "checked_at_utc": "2026-10-29T04:29:31.9356276Z",
+  "service": "SQLTELEMETRY",
+  "telemetry_service_state": "Running",
+  "administrator": false,
+  "rule_exists": true,
+  "all_firewall_profiles_enabled": true,
+  "effective_outbound_block": true,
+  "service_disabled_or_removed": false,
+  "database_service_status": "Running",
+  "applied": false,
+  "removed": false,
+  "machine_wan_disconnected": false
+}

@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Chấm công: Build & Debug",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--app-dir", "backend", "--host", "127.0.0.1", "--port", "8000", "--workers", "1", "--no-access-log", "--no-use-colors"],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {"PYTHONIOENCODING": "utf-8"},
+      "console": "integratedTerminal",
+      "redirectOutput": true,
+      "justMyCode": true,
+      "preLaunchTask": "Chấm công: Prepare debug",
+      "postDebugTask": "Chấm công: Restore background service",
+      "serverReadyAction": {
+        "pattern": "Uvicorn running on http://127\\.0\\.0\\.1:([0-9]+)",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
+      }
+    }
+  ]
+}

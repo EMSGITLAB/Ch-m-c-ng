@@ -1,0 +1,17 @@
+{
+  "employees": 21,
+  "imported_photos": 19,
+  "attendance_events": 0,
+  "adjustments": 0,
+  "snapshots": 0,
+  "ui_sandbox_removed": true,
+  "identities_exported": false,
+  "attendance_enabled": false,
+  "recognition_ready": true,
+  "recorded_live_photo_purge": {
+    "imported_photos_deleted": 1,
+    "audit_time": "2026-10-28T08:11:32.531428+00:00",
+    "restored_by_test_workflow": false
+  },
+  "checked_at": "2026-10-28T08:35:09.542986+00:00"
+}

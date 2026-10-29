@@ -1,0 +1,36 @@
+{
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "scoring_rule": "mean-top3-per-person-v1",
+  "dataset_digest": "9717fb4f70746f3900472844c482b92b83c3b588f15f1f32ea6558f224e5d068",
+  "coverage": {
+    "enrolled_people": 1,
+    "enrollment_samples": 10,
+    "known_probe_people": 1,
+    "known_probes": 10,
+    "unknown_probe_people": 0,
+    "unknown_probes": 0,
+    "completed_collections": 2
+  },
+  "status": "insufficient_data",
+  "reasons": [
+    "Mốc kiểm chứng M1 theo kế hoạch cần ít nhất 10 người đăng ký. Với 1 người vẫn xem được điểm so khớp thử giữa các phiên.",
+    "Cần tối thiểu 2 người ngoài bộ đăng ký, mỗi người 5 mẫu hiệu chỉnh; đây chỉ là mức khởi đầu M1."
+  ],
+  "candidate": null,
+  "same_person_diagnostics": {
+    "measurement": "same_person_cross_session_cosine",
+    "samples": 10,
+    "minimum": 0.786443,
+    "median": 0.858015,
+    "maximum": 0.93806,
+    "mean": 0.856906,
+    "is_accuracy_percentage": false,
+    "acceptance_threshold_selected": false
+  },
+  "operational_enabled": false,
+  "final_evaluation_used": false,
+  "measurement_unit": "individual_sample_not_attendance_session",
+  "identities_exported": false,
+  "vectors_exported": false,
+  "generated_at": "2026-10-28T05:14:20.489119+00:00"
+}

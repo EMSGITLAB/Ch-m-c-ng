@@ -1,0 +1,58 @@
+{
+  "status": "fresh_camera_probe_compared",
+  "trial_baseline": "2026-10-28T15:51:19.342019+00:00",
+  "probe_created_at": "2026-10-28T15:58:46.977272+00:00",
+  "probe_collection_complete": false,
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "scoring_rule": "mean-top3-available-per-person-v2",
+  "reference_experiments": [
+    {
+      "reference_cap": 1,
+      "gallery_people": 16,
+      "expected_reference_images_used": 1,
+      "top1_is_expected": true,
+      "top1_cosine": 0.7078232169151306,
+      "top2_cosine": 0.18324944376945496,
+      "top2_margin": 0.5245737731456757,
+      "expected_person_cosine": 0.7078232169151306
+    },
+    {
+      "reference_cap": 3,
+      "gallery_people": 16,
+      "expected_reference_images_used": 3,
+      "top1_is_expected": true,
+      "top1_cosine": 0.6689567565917969,
+      "top2_cosine": 0.18324944376945496,
+      "top2_margin": 0.4857073128223419,
+      "expected_person_cosine": 0.6689567565917969
+    },
+    {
+      "reference_cap": 5,
+      "gallery_people": 16,
+      "expected_reference_images_used": 5,
+      "top1_is_expected": true,
+      "top1_cosine": 0.7071797251701355,
+      "top2_cosine": 0.18324944376945496,
+      "top2_margin": 0.5239302814006805,
+      "expected_person_cosine": 0.7071797251701355
+    },
+    {
+      "reference_cap": 10,
+      "gallery_people": 16,
+      "expected_reference_images_used": 10,
+      "top1_is_expected": true,
+      "top1_cosine": 0.7127018570899963,
+      "top2_cosine": 0.18324944376945496,
+      "top2_margin": 0.5294524133205414,
+      "expected_person_cosine": 0.7127018570899963
+    }
+  ],
+  "different_capture_from_reference": true,
+  "threshold_selected": false,
+  "identity_confirmed": false,
+  "attendance_recorded": false,
+  "live_database_modified": false,
+  "images_vectors_exported": false,
+  "identities_exported": false,
+  "source": "fresh_camera_calibration_sample_after_user_requested_baseline"
+}

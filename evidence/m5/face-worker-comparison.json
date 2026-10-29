@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "kind": "threadpool_sql_False",
+      "count": 16,
+      "wall_ms": 158.231,
+      "detect_ms": 105.677,
+      "embed_ms": 76.04
+    },
+    {
+      "kind": "threadpool_sql_True",
+      "count": 16,
+      "wall_ms": 446.202,
+      "detect_ms": 302.335,
+      "embed_ms": 222.03
+    },
+    {
+      "kind": "anyio_sql_False",
+      "count": 16,
+      "wall_ms": 489.355,
+      "detect_ms": 312.68,
+      "embed_ms": 247.438
+    },
+    {
+      "kind": "anyio_sql_True",
+      "count": 16,
+      "wall_ms": 831.68,
+      "detect_ms": 558.795,
+      "embed_ms": 425.957
+    },
+    {
+      "kind": "anyio_sql_False",
+      "count": 16,
+      "wall_ms": 455.418,
+      "detect_ms": 239.98,
+      "embed_ms": 184.935
+    }
+  ],
+  "sql_readonly_master_select1": true,
+  "public_fixture_only": true,
+  "production_modified": false
+}

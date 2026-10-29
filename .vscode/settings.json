@@ -1,0 +1,20 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": ["${workspaceFolder}/backend"],
+  "python.analysis.exclude": ["**/.runtime/**", "**/.venv/**", "**/frontend/node_modules/**"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["backend/tests"],
+  "files.watcherExclude": {
+    "**/.runtime/**": true,
+    "**/.venv/**": true,
+    "**/frontend/node_modules/**": true,
+    "**/frontend/dist/**": true
+  },
+  "search.exclude": {
+    "**/.runtime": true,
+    "**/.venv": true,
+    "**/frontend/node_modules": true,
+    "**/frontend/dist": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "provider": "SQL Server",
+  "server": "localhost",
+  "database": "ChamCongFaceLocal",
+  "version": "17.0.1000.7",
+  "edition": "Enterprise Developer Edition (64-bit)",
+  "authentication": "Windows integrated (development)",
+  "other_databases_modified": false,
+  "postgresql": "stopped and deferred"
+}

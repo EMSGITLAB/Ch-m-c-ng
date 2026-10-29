@@ -1,0 +1,16 @@
+{
+  "completed": false,
+  "passed": false,
+  "reason": "Windows PermissionError replacing progress JSON; runner exited before 30-minute completion",
+  "partial_progress": {
+    "pairs_completed": 242,
+    "pairs_total": 300,
+    "sessions_ok": 482,
+    "sessions_failed": 2,
+    "elapsed_seconds": 1453.9
+  },
+  "two_expired_pending_sessions_observed": true,
+  "final_p95_available": false,
+  "live_database_modified": false,
+  "harness_remediation": "bounded PermissionError retry and nonfatal checkpoint skip; per-session diagnostic journal; successful receipts and failed uncommitted sessions reconciled separately"
+}

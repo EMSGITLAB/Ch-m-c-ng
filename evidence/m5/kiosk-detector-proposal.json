@@ -1,0 +1,47 @@
+{
+  "production_configuration_modified": false,
+  "model_or_threshold_modified": false,
+  "licensed_public_fixture_timings": [
+    {
+      "detector_max_edge": null,
+      "two_workers": true,
+      "samples": 20,
+      "p95_ms": 153.083,
+      "cosine_to_original_same_public_image": 1.0
+    },
+    {
+      "detector_max_edge": 960,
+      "two_workers": true,
+      "samples": 20,
+      "p95_ms": 171.618,
+      "cosine_to_original_same_public_image": 0.937868
+    },
+    {
+      "detector_max_edge": 640,
+      "two_workers": true,
+      "samples": 20,
+      "p95_ms": 105.677,
+      "cosine_to_original_same_public_image": 0.9464
+    }
+  ],
+  "local_photo_comparisons": 118,
+  "comparison_canvas_pixels": [
+    1280,
+    720
+  ],
+  "candidate_detector_max_edge": 640,
+  "quality_transitions": {
+    "accepted -> accepted": 75,
+    "face_too_small -> accepted": 19,
+    "accepted -> face_too_small": 4,
+    "face_too_small -> face_too_small": 17,
+    "multiple_faces -> face_too_small": 2,
+    "multiple_faces -> accepted": 1
+  },
+  "both_accepted": 75,
+  "same_image_embedding_cosine_min": 0.880635,
+  "same_image_embedding_cosine_median": 0.950529,
+  "independent_accuracy_or_pad_validation": false,
+  "real_camera_controls_reprocessed": false,
+  "images_vectors_or_identities_exported": false
+}

@@ -1,0 +1,16 @@
+{
+  "timezone": "Asia/Ho_Chi_Minh",
+  "cooldown_seconds": 60,
+  "kiosk_direction": "in",
+  "capture_retention_days": 0,
+  "store_enrollment_images": false,
+  "attendance_retention_days": null,
+  "default_shift": {
+    "name": "Ca mẫu có thể điều chỉnh",
+    "start": "08:00",
+    "end": "17:00",
+    "break_start": "12:00",
+    "break_end": "13:00",
+    "approved_for_real_timesheets": false
+  }
+}

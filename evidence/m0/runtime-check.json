@@ -1,0 +1,12 @@
+{
+  "endpoint": "http://127.0.0.1:8000/health/ready",
+  "status": 503,
+  "body": {
+    "ready": false,
+    "database": true,
+    "recognition": false,
+    "reason": "recognition_not_initialized"
+  },
+  "postgresqlPortOpen": false,
+  "caddyPortOpen": false
+}

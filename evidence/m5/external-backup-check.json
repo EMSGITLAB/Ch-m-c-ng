@@ -1,0 +1,11 @@
+{
+  "destination_configured_by_user": true,
+  "destination_drive": "E:",
+  "destination_bus": "USB",
+  "independent_device_confirmed": true,
+  "archive_bytes": 60541452,
+  "restore_drill_seconds": 27.25,
+  "source_data_unchanged": true,
+  "recovery_key_independently_preserved": false,
+  "identities_images_vectors_in_evidence": false
+}

@@ -1,0 +1,28 @@
+{
+  "backend_full": {
+    "passed": 305,
+    "native_only_skipped": 6
+  },
+  "backend_targeted_after_display_changes": {
+    "passed": 22
+  },
+  "native_sqlserver": {
+    "passed": 204,
+    "nonlocal_network_attempts": 0,
+    "isolated_database": true
+  },
+  "node": {
+    "passed": 31
+  },
+  "frontend_build": "passed",
+  "ruff": "passed",
+  "browser_ui": "passed in isolated synthetic database",
+  "worker_browser": "25/25 licensed static fixture frames detected; mean 8.94ms; real camera not asserted",
+  "live_runtime_ready": true,
+  "one_photo_profiles_enabled": 367,
+  "total_members": 368,
+  "portraits_displayed": 370,
+  "rejected_multiple_face_photos": 3,
+  "group_accuracy_validated": false,
+  "pad_validated": false
+}

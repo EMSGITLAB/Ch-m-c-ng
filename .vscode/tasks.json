@@ -1,0 +1,60 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Chấm công: Build frontend",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": ["run", "build"],
+      "options": {"cwd": "${workspaceFolder}/frontend"},
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "shared"}
+    },
+    {
+      "label": "Chấm công: Stop background service",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["${workspaceFolder}/scripts/run_service.py", "--stop"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Chấm công: Prepare debug",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Chấm công: Build frontend", "Chấm công: Stop background service"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Chấm công: Restore background service",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/start_service.ps1"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Chấm công: Run background",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/vscode_run.ps1", "-Restart", "-OpenBrowser"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Chấm công: Build & Run",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Chấm công: Build frontend", "Chấm công: Run background"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Chấm công: Test backend",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["-m", "pytest", "backend/tests", "-q"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

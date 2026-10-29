@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-28",
+  "device": "laptop camera",
+  "observed_auto_saved_samples_at_checkpoint": 3,
+  "source": "SQL Server collection sample quality.capture_mode=auto, aggregate only",
+  "ui_advanced_to_next_pose": true,
+  "oval_fully_visible_in_camera_area": true,
+  "full_auto_collection_completed_at_checkpoint": false,
+  "images_exported": false,
+  "vectors_exported": false,
+  "identities_exported": false,
+  "tablet_verified": false,
+  "identity_accuracy_verified": false,
+  "pad_verified": false
+}

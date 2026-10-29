@@ -1,0 +1,8 @@
+# T34 — tiến độ đo tải, 29/10/2026
+
+1. Baseline 30 phút, hai kiosk HTTP/SQL Server riêng, CPU model thật, ảnh kỹ thuật 480×480: 600/600 phiên thành công, lỗi 0, 58 sự kiện khớp các biên nhận ghi mới và mọi retry 10 lần giữ nguyên kết quả. P95 từ ảnh nhận diện đầu đến commit 2,2658 giây, gồm khoảng giữ ổn định. **Chưa đạt** mục tiêu 2 giây. `kiosk-load-baseline.json` giữ kết quả này, không ghi đè bằng bản tốt hơn.
+2. Danh sách kỹ thuật 100 mục gồm một probe ảnh công khai có giấy phép và 99 vector distractor giả lập. Đây là đo sức tải số lượng gallery, không phải 100 danh tính thật hay đo AI/PAD. Sau tối ưu đọc gallery, ảnh 480×480 đạt lượt ngắn P95 1,3234 giây; chưa đại diện độ phân giải camera truyền thực tế.
+3. Ảnh toàn cảnh 1600×900 đạt lượt ngắn P95 2,2786 giây, vẫn vượt mục tiêu. Kiosk hiện gửi cạnh dài mặc định 1280 pixel, giữ toàn bộ cảnh/tỷ lệ (Node test kiểm tra source rectangle 1920×1080 vẫn đầy đủ). Lượt ngắn 1280×720, hai kiosk, 100 mục đạt 4/4 phiên, P95 1,5917 giây. Cần đo đủ 30 phút ở chính độ phân giải cấu hình hiện tại trước khi chốt T34.
+4. Đã đo CPU 14/1/2/4 luồng, hai lượt; kết quả phụ thuộc tải máy, không khẳng định 4 luôn nhanh hơn 14. Giới hạn mặc định 4 giúp kiểm soát cạnh tranh tài nguyên; vector cùng ảnh giữa 14 và 4 có cosine 1,0. Không đổi model/ngưỡng. Xem `face-cpu-threads.json`.
+
+Driver `scripts/check_kiosk_load.py` có job Windows để dọn tiến trình con khi driver chết, khóa chống chạy chồng, database riêng được dọn có hàng rào tên, tiến độ ghi atomic và dấu SHA256 nguồn trước/sau. Một phép đo không được coi đạt khi nguồn thay đổi trong lúc chạy. Không sửa database vận hành, không xuất ảnh/vector/nhân viên. Chưa đo camera/tablet thật hoặc 8 giờ liên tục trong báo cáo này.

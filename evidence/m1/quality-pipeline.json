@@ -1,0 +1,27 @@
+{
+  "fixture": "OpenCV Zoo SFace demo (Apache-2.0)",
+  "single_face_detect_align_embedding": "passed",
+  "multiple_face_rejection": "passed",
+  "no_face_rejection": "passed",
+  "quality": {
+    "accepted": true,
+    "face_count": 1,
+    "frame_width": 480,
+    "frame_height": 480,
+    "box": [
+      78.9,
+      31.6,
+      340.1,
+      401.3
+    ],
+    "brightness": 125.83,
+    "sharpness": 1088.98,
+    "roll_degrees": 9.4,
+    "nose_offset": 0.088,
+    "yaw_ratio": 0.0879,
+    "pitch_ratio": 0.6147,
+    "reason": "accepted"
+  },
+  "real_camera_calibration": false,
+  "images_saved": false
+}

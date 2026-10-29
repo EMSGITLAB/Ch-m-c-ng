@@ -1,0 +1,15 @@
+{
+  "fixture": "OpenCV Zoo SFace demo (Apache-2.0)",
+  "native_detection_only_preview": "passed",
+  "frame_and_front_pose": "passed",
+  "stable_frames": [
+    1,
+    2,
+    3
+  ],
+  "single_use_capture_permission": "passed",
+  "images_saved": false,
+  "vectors_saved": false,
+  "real_camera_auto_capture_verified": false,
+  "pad_verified": false
+}

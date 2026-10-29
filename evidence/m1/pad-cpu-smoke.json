@@ -1,0 +1,15 @@
+{
+  "model_id": "minifasnet-v2-v1se-onnx-b32929ad-ebab7f90",
+  "runtime": "OpenCV DNN CPU",
+  "runs": 20,
+  "input": "public_OpenCV_Zoo_demo_unlabelled_not_validation_data",
+  "timing_scope": "two_PAD_models_and_preprocessing_only_not_full_attendance",
+  "median_ms": 10.01,
+  "p95_ms": 11.05,
+  "repeatability_passed": true,
+  "networks_loaded_and_executed": 2,
+  "threshold_selected": false,
+  "pad_accuracy_validated": false,
+  "attendance_enabled": false,
+  "images_vectors_identities_exported": false
+}

@@ -1,0 +1,10 @@
+{
+  "protected_key_saved_by_user": true,
+  "file_on_configured_usb": true,
+  "file_checksum_verified": true,
+  "current_master_key_matches": true,
+  "external_deletion_ledger_verified": true,
+  "deletion_subjects": 1,
+  "plaintext_key_exported": false,
+  "password_read_or_recorded_by_agent": false
+}

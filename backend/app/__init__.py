@@ -1,0 +1,2 @@
+"""Local attendance application."""
+

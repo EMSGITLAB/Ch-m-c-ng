@@ -1,0 +1,407 @@
+{
+  "samples": [
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 114.21,
+      "threads": 4,
+      "detect_ms": 66.44,
+      "embed_ms": 14.28,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 307.717,
+      "threads": 4,
+      "detect_ms": 61.83,
+      "embed_ms": 239.95,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 1230.874,
+      "threads": 4,
+      "detect_ms": 601.6,
+      "embed_ms": 591.71,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 767.329,
+      "threads": 4,
+      "detect_ms": 632.01,
+      "embed_ms": 117.33,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 382.713,
+      "threads": 4,
+      "detect_ms": 312.63,
+      "embed_ms": 52.85,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 801.225,
+      "threads": 4,
+      "detect_ms": 493.51,
+      "embed_ms": 302.03,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 554.118,
+      "threads": 4,
+      "detect_ms": 370.68,
+      "embed_ms": 170.94,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 543.671,
+      "threads": 4,
+      "detect_ms": 356.01,
+      "embed_ms": 170.37,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 772.025,
+      "threads": 4,
+      "detect_ms": 488.42,
+      "embed_ms": 222.62,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 345.429,
+      "threads": 4,
+      "detect_ms": 258.65,
+      "embed_ms": 78.32,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 825.613,
+      "threads": 4,
+      "detect_ms": 496.62,
+      "embed_ms": 314.56,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 809.049,
+      "threads": 4,
+      "detect_ms": 546.75,
+      "embed_ms": 233.5,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 698.153,
+      "threads": 4,
+      "detect_ms": 431.59,
+      "embed_ms": 190.75,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 853.05,
+      "threads": 4,
+      "detect_ms": 476.42,
+      "embed_ms": 323.29,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 1061.265,
+      "threads": 4,
+      "detect_ms": 805.95,
+      "embed_ms": 226.57,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 606.781,
+      "threads": 4,
+      "detect_ms": 389.5,
+      "embed_ms": 196.35,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 613.277,
+      "threads": 4,
+      "detect_ms": 430.89,
+      "embed_ms": 159.98,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 598.914,
+      "threads": 4,
+      "detect_ms": 379.19,
+      "embed_ms": 204.29,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 581.426,
+      "threads": 4,
+      "detect_ms": 405.1,
+      "embed_ms": 168.5,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 662.534,
+      "threads": 4,
+      "detect_ms": 364.16,
+      "embed_ms": 287.01,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 653.094,
+      "threads": 4,
+      "detect_ms": 476.61,
+      "embed_ms": 153.13,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 561.329,
+      "threads": 4,
+      "detect_ms": 372.06,
+      "embed_ms": 174.55,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 634.469,
+      "threads": 4,
+      "detect_ms": 467.39,
+      "embed_ms": 154.56,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 773.005,
+      "threads": 4,
+      "detect_ms": 523.78,
+      "embed_ms": 209.68,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 193.17,
+      "threads": 4,
+      "detect_ms": 128.55,
+      "embed_ms": 49.39,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 163.695,
+      "threads": 4,
+      "detect_ms": 112.24,
+      "embed_ms": 41.91,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 113.53,
+      "threads": 4,
+      "detect_ms": 76.85,
+      "embed_ms": 29.16,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 176.029,
+      "threads": 4,
+      "detect_ms": 141.91,
+      "embed_ms": 28.81,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 95.06,
+      "threads": 4,
+      "detect_ms": 66.32,
+      "embed_ms": 24.1,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 95.387,
+      "threads": 4,
+      "detect_ms": 63.16,
+      "embed_ms": 26.84,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 101.267,
+      "threads": 4,
+      "detect_ms": 67.3,
+      "embed_ms": 28.81,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 110.321,
+      "threads": 4,
+      "detect_ms": 68.26,
+      "embed_ms": 37.87,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 198.838,
+      "threads": 4,
+      "detect_ms": 92.94,
+      "embed_ms": 100.43,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 1611.556,
+      "threads": 4,
+      "detect_ms": 1233.36,
+      "embed_ms": 328.15,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 279.057,
+      "threads": 4,
+      "detect_ms": 191.13,
+      "embed_ms": 82.28,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 262.538,
+      "threads": 4,
+      "detect_ms": 199.31,
+      "embed_ms": 51.31,
+      "kind": "mixed_no_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 408.142,
+      "threads": 4,
+      "detect_ms": 273.28,
+      "embed_ms": 128.62,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 172.224,
+      "threads": 4,
+      "detect_ms": 114.47,
+      "embed_ms": 52.36,
+      "kind": "mixed_sql"
+    },
+    {
+      "thread": 43752,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 425.591,
+      "threads": 4,
+      "detect_ms": 370.03,
+      "embed_ms": 49.5,
+      "kind": "dedicated"
+    },
+    {
+      "thread": 20452,
+      "fp_before": "0x8001f",
+      "fp_after": "0x8001f",
+      "ms": 435.683,
+      "threads": 4,
+      "detect_ms": 401.74,
+      "embed_ms": 28.49,
+      "kind": "mixed_no_sql"
+    }
+  ],
+  "minimum_cosine": 1.0,
+  "models_or_production_modified": false,
+  "sql_readonly_master_select1": true
+}

@@ -1,0 +1,52 @@
+{
+  "browser": "headless Edge",
+  "synthetic_camera": false,
+  "licensed_static_fixture": true,
+  "result": [
+    {
+      "passed": true,
+      "frames": 25,
+      "counts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mean_ms": 8.940000019073487,
+      "max_ms": 62.299999952316284,
+      "startup_ms": 759.3999998569489
+    }
+  ],
+  "local_paths": [
+    "/",
+    "/probe.jpg",
+    "/favicon.ico",
+    "/vision/tracker-worker.js",
+    "/vision/vision_bundle.js",
+    "/vision/wasm/vision_wasm_internal.js",
+    "/vision/wasm/vision_wasm_internal.wasm",
+    "/vision/blaze_face_short_range.tflite"
+  ],
+  "real_device_validation": false
+}

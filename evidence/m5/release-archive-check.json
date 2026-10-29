@@ -1,0 +1,12 @@
+{
+  "release": "local-functional-20261029-v7",
+  "archive": "local-functional-20261029-v7.zip",
+  "manifest_files": 166,
+  "zip_members": 167,
+  "archive_sha256": "36d93fea5ba14bcbf85b84d774b80f5f350b63ce2a0a5cee144aa047b1333741",
+  "archive_bytes": 133751479,
+  "all_members_checksum_verified": true,
+  "manifest_entries_only": true,
+  "unlisted_runtime_or_venv_included": false,
+  "private_data_included": false
+}

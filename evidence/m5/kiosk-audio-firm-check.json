@@ -1,0 +1,42 @@
+{
+  "phrase": "Hợp lệ.",
+  "generator": "eSpeak NG vi, offline",
+  "development_postprocessing": "local FFmpeg, offline",
+  "voice_parameters": {
+    "speed": 150,
+    "pitch": 42,
+    "word_gap": 6
+  },
+  "file": "hop-le-dut-khoat.wav",
+  "sample_rate": 44100,
+  "pcm_bits": 16,
+  "channels": 1,
+  "duration_seconds": 0.7763,
+  "peak_dbfs": -1.0,
+  "true_peak_dbtp": -1.0,
+  "integrated_lufs": -15.35,
+  "rms_dbfs": -15.52,
+  "original_rms_dbfs": -19.79,
+  "whole_file_rms_increase_db": 4.27,
+  "clipped_samples": 0,
+  "sha256": "bf60c7ec93b387d3269f44de5315c1dbc54a6f3db673907d92107444f796756a",
+  "http_serving_checks": [
+    {
+      "port": 5173,
+      "status": 200,
+      "mime": "audio/wav",
+      "checksum_matches": true
+    },
+    {
+      "port": 8000,
+      "status": 200,
+      "mime": "audio/wav",
+      "checksum_matches": true
+    }
+  ],
+  "frontend_build_passed": true,
+  "node_tests_passed": 29,
+  "physical_speaker_listening_confirmed": false,
+  "real_person_voice_cloned": false,
+  "external_tts_api": false
+}

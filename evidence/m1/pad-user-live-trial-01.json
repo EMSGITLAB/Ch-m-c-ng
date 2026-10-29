@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-28",
+  "source": "user_report_of_live_app_result",
+  "ui_scenario_label_at_capture": "unlabelled",
+  "ground_truth_after_user_confirmation": "live_person_directly_in_front_of_camera",
+  "ground_truth_source": "operator_confirmed_after_capture_in_chat",
+  "independent_sessions": 1,
+  "correlated_frames": 5,
+  "quality_accepted_frames": 5,
+  "context_clipped_frames": 5,
+  "live_scores_as_displayed": [1.000, 1.000, 0.999, 1.000, 1.000],
+  "summary_as_displayed": {"mean": 1.000, "minimum": 0.999, "maximum": 1.000},
+  "pad_ms_as_displayed": [7.7, 7.0, 7.3, 7.7, 7.0],
+  "unrounded_scores_available": false,
+  "model_id_in_user_report": null,
+  "expected_model_id_from_current_app": "minifasnet-v2-v1se-onnx-b32929ad-ebab7f90",
+  "threshold_selected": false,
+  "attack_trials_available_in_this_report": false,
+  "pad_accuracy_validated": false,
+  "images_vectors_identities_exported": false,
+  "attendance_enabled_by_this_trial": false
+}

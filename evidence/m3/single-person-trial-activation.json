@@ -1,0 +1,21 @@
+{
+  "scope": "single-person-functional-v1",
+  "mode": "functional_trial",
+  "metrics": {
+    "reference_images": 1,
+    "probe_people": 1,
+    "independent_probe_images": 11,
+    "minimum_positive_cosine": 0.6990440487861633,
+    "existing_negative_images": 15,
+    "maximum_existing_negative_cosine": 0.3128410577774048,
+    "provisional_threshold": 0.5059425532817841,
+    "group_accuracy_validated": false,
+    "pad_validated": false
+  },
+  "reference_and_probe_different_images": true,
+  "participant_count": 1,
+  "images_vectors_exported": false,
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "automatic_commit_in_trial": true,
+  "restart_required": true
+}

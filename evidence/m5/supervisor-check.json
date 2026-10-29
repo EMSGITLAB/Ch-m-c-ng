@@ -1,0 +1,10 @@
+{
+  "isolated_port": true,
+  "duplicate_supervisor_rejected": true,
+  "crashed_backend_restarted": true,
+  "owned_process_tree_stopped": true,
+  "abrupt_supervisor_exit_cleans_children": true,
+  "stale_pid_not_trusted": true,
+  "live_server_modified": false,
+  "identities_images_vectors_exported": false
+}
