@@ -1,0 +1,8 @@
+{
+  "backend/app/face_engine.py": true,
+  "backend/app/quality.py": true,
+  "backend/app/matching.py": true,
+  "backend/app/recognition_sequence.py": true,
+  "backend/app/attendance.py": true,
+  "models/manifest.json": true
+}

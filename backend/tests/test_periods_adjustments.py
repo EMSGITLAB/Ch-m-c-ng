@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import pytest
 from app.adjustments import AdjustmentInput, create_adjustment
 from app.config import get_settings
-from app.models import AttendanceAdjustment, AttendanceEvent, AuditLog, TimesheetSnapshot
+from app.models import AttendanceAdjustment, AttendanceEvent, AuditLog, Device, TimesheetSnapshot
 from app.periods import CloseInput, close_period
 from fastapi import HTTPException
 from pydantic import ValidationError
@@ -349,6 +349,14 @@ def test_recording_cannot_write_closed_month_but_existing_receipt_still_retries(
             SimpleNamespace(id=1),
             now=now + timedelta(days=40),
         )
+    duplicate = record(pending, device=1, at=now + timedelta(seconds=61))
+    assert duplicate["status"] == "duplicate" and duplicate["event_id"] == first["event_id"]
+    # A same-shift rescan changes no punch, even in a closed month. A genuinely
+    # new direction must still pass the closed-period write protection.
+    pending = session(device=1, direction="out")
+    with factory() as db:
+        db.get(Device, ids[2][1]).direction = "out"
+        db.commit()
     with pytest.raises(HTTPException) as error:
         record(pending, device=1, at=now + timedelta(seconds=61))
     assert error.value.status_code == 409

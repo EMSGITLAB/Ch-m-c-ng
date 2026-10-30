@@ -1,0 +1,18 @@
+{
+  "release": "upgrade-candidate-20261029-a",
+  "real_native_sqlserver": true,
+  "prior_snapshot_app_and_candidate_fresh_offline_install_passed": true,
+  "same_schema_app_upgrade_and_model_smoke_passed": true,
+  "partial_committed_ddl_failure_injected": true,
+  "compatible_rollback_restored_into_new_database": true,
+  "rollback_contains_no_failed_ddl": true,
+  "source_counts_unchanged": true,
+  "encrypted_archive_unchanged": true,
+  "live_service_switched": false,
+  "business_config_preserved": true,
+  "new_and_old_access_remain_disabled": true,
+  "elapsed_seconds": 985.24,
+  "cross_schema_release_upgrade_tested": false,
+  "physical_vm_tested": false,
+  "personal_data_in_evidence": false
+}

@@ -37,6 +37,7 @@ class Employee(Base):
     name: Mapped[str] = mapped_column(Unicode(160), nullable=False)
     department: Mapped[str] = mapped_column(Unicode(120), default="")
     active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     biometric_revision: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
@@ -321,4 +322,159 @@ class AttendanceAdjustment(Base):
               sqlite_where=text("kind = 'void' AND revoked_at IS NULL AND target_adjustment_id IS NOT NULL"),
               postgresql_where=text("kind = 'void' AND revoked_at IS NULL AND target_adjustment_id IS NOT NULL")),
     )
+
+
+class PartnerVendor(Base):
+    __tablename__ = "partner_vendors"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    code: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(Unicode(160), nullable=False)
+    active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class PartnerBatch(Base):
+    __tablename__ = "partner_batches"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    request_id: Mapped[str] = mapped_column(String(36), unique=True, nullable=False)
+    request_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    partner_id: Mapped[str] = mapped_column(ForeignKey("partner_vendors.id"), index=True)
+    name: Mapped[str] = mapped_column(Unicode(100), nullable=False)
+    site: Mapped[str] = mapped_column(Unicode(120), nullable=False)
+    work_date: Mapped[date] = mapped_column(Date, index=True, nullable=False)
+    timezone: Mapped[str] = mapped_column(String(64), nullable=False)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    admission_from: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    checkout_until: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    rules: Mapped[dict] = mapped_column(JSON, nullable=False)
+    capacity: Mapped[int] = mapped_column(Integer, nullable=False)
+    requested_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    next_number: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    serial_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    retention_hours: Mapped[int] = mapped_column(Integer, default=48, nullable=False)
+    state: Mapped[str] = mapped_column(String(12), default="draft", nullable=False)
+    policy_id: Mapped[str | None] = mapped_column(ForeignKey("recognition_policies.id"), nullable=True)
+    model_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    threshold: Mapped[float | None] = mapped_column(Float, nullable=True)
+    minimum_margin: Mapped[float | None] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    __table_args__ = (
+        CheckConstraint("capacity BETWEEN 1 AND 5000 AND next_number >= 0 AND retention_hours = 48", name="ck_partner_batch_limits"),
+        CheckConstraint("state IN ('draft','open','running','review','closed')", name="ck_partner_batch_state"),
+        CheckConstraint("admission_from <= starts_at AND starts_at < ends_at AND ends_at <= checkout_until", name="ck_partner_batch_times"),
+        CheckConstraint("state = 'draft' OR (policy_id IS NOT NULL AND model_id IS NOT NULL AND threshold IS NOT NULL AND minimum_margin IS NOT NULL)", name="ck_partner_batch_policy"),
+        Index("uq_partner_batch_serial", "serial_number", unique=True,
+              mssql_where=text("serial_number IS NOT NULL"), sqlite_where=text("serial_number IS NOT NULL"),
+              postgresql_where=text("serial_number IS NOT NULL")),
+    )
+
+
+class PartnerDeviceBinding(Base):
+    __tablename__ = "partner_device_bindings"
+    device_id: Mapped[str] = mapped_column(ForeignKey("devices.id"), primary_key=True)
+    batch_id: Mapped[str] = mapped_column(ForeignKey("partner_batches.id"), index=True)
+    active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class PartnerCounter(Base):
+    __tablename__ = "partner_counter"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=False)
+    next_batch: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    __table_args__ = (CheckConstraint("id = 1 AND next_batch >= 0", name="ck_partner_counter"),)
+
+
+class PartnerWorker(Base):
+    __tablename__ = "partner_workers"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    batch_id: Mapped[str] = mapped_column(ForeignKey("partner_batches.id"), index=True)
+    number: Mapped[int] = mapped_column(Integer, nullable=False)
+    code: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    admission_request_id: Mapped[str] = mapped_column(String(36), unique=True, nullable=False)
+    device_id: Mapped[str] = mapped_column(ForeignKey("devices.id"), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    state: Mapped[str] = mapped_column(String(12), default="pending", nullable=False)
+    declared_name: Mapped[str | None] = mapped_column(Unicode(160), nullable=True)
+    name_source: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    name_revision: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    name_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    approved_by: Mapped[int | None] = mapped_column(ForeignKey("admin_users.id"), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    admitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    checked_out_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reserved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    pending_expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    biometric_expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    face_reference: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    __table_args__ = (
+        UniqueConstraint("batch_id", "number", name="uq_partner_worker_number"),
+        CheckConstraint("state IN ('pending','active','completed','cancelled') AND number > 0 AND name_revision >= 0", name="ck_partner_worker_state"),
+        CheckConstraint("state NOT IN ('active','completed') OR (declared_name IS NOT NULL AND name_confirmed_at IS NOT NULL AND approved_at IS NOT NULL AND admitted_at IS NOT NULL)", name="ck_partner_worker_admitted"),
+        CheckConstraint("state <> 'completed' OR checked_out_at IS NOT NULL", name="ck_partner_worker_completed"),
+    )
+
+
+class PartnerCapture(Base):
+    __tablename__ = "partner_captures"
+    request_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    batch_id: Mapped[str] = mapped_column(ForeignKey("partner_batches.id"), index=True)
+    device_id: Mapped[str] = mapped_column(ForeignKey("devices.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    direction: Mapped[str] = mapped_column(String(3), nullable=False)
+    state: Mapped[str] = mapped_column(String(12), default="pending", nullable=False)
+    worker_id: Mapped[str | None] = mapped_column(ForeignKey("partner_workers.id"), nullable=True)
+    frames: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    feature_reference: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    stable_frames: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    first_observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    receipt: Mapped[dict | None] = mapped_column(JSON(none_as_null=True), nullable=True)
+    __table_args__ = (
+        CheckConstraint("state IN ('pending','verified','used','rejected') AND direction IN ('in','out')", name="ck_partner_capture_state"),
+        CheckConstraint("stable_frames BETWEEN 0 AND 12", name="ck_partner_capture_frames"),
+        CheckConstraint("state NOT IN ('verified','used') OR worker_id IS NOT NULL", name="ck_partner_capture_worker"),
+        CheckConstraint("state <> 'used' OR receipt IS NOT NULL", name="ck_partner_capture_receipt"),
+    )
+
+
+class PartnerEvent(Base):
+    __tablename__ = "partner_events"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("partner_workers.id"), index=True)
+    capture_id: Mapped[str] = mapped_column(ForeignKey("partner_captures.request_id"), unique=True, nullable=False)
+    device_id: Mapped[str] = mapped_column(ForeignKey("devices.id"), nullable=False)
+    direction: Mapped[str] = mapped_column(String(3), nullable=False)
+    server_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    declared_name: Mapped[str] = mapped_column(Unicode(160), nullable=False)
+    __table_args__ = (UniqueConstraint("worker_id", "direction", name="uq_partner_worker_direction"),
+                     CheckConstraint("direction IN ('in','out')", name="ck_partner_event_direction"))
+
+
+class PartnerReportAdjustment(Base):
+    __tablename__ = "partner_report_adjustments"
+    request_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    request_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    batch_id: Mapped[str] = mapped_column(ForeignKey("partner_batches.id"), index=True)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("partner_workers.id"), index=True)
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    overrides: Mapped[dict] = mapped_column(JSON, nullable=False)
+    reason: Mapped[str] = mapped_column(Unicode(500), nullable=False)
+    admin_id: Mapped[int] = mapped_column(ForeignKey("admin_users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    __table_args__ = (UniqueConstraint("worker_id", "revision", name="uq_partner_adjustment_revision"),
+                     CheckConstraint("revision > 0", name="ck_partner_adjustment_revision"))
+
+
+class PartnerReportSnapshot(Base):
+    __tablename__ = "partner_report_snapshots"
+    batch_id: Mapped[str] = mapped_column(ForeignKey("partner_batches.id"), primary_key=True)
+    request_id: Mapped[str] = mapped_column(String(36), unique=True, nullable=False)
+    source_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    report: Mapped[dict] = mapped_column(JSON, nullable=False)
+    reason: Mapped[str] = mapped_column(Unicode(500), nullable=False)
+    admin_id: Mapped[int] = mapped_column(ForeignKey("admin_users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 

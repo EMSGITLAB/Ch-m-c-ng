@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 from uuid import uuid4
 
 import pyodbc
-from sqlalchemy import create_engine, delete, func, select, text, update
+from sqlalchemy import create_engine, delete, func, inspect, select, text, update
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.orm import Session
 
@@ -30,6 +30,15 @@ from .models import (
     Employee,
     FaceTemplate,
     ImportedFacePhoto,
+    PartnerBatch,
+    PartnerCapture,
+    PartnerCounter,
+    PartnerDeviceBinding,
+    PartnerEvent,
+    PartnerReportAdjustment,
+    PartnerReportSnapshot,
+    PartnerVendor,
+    PartnerWorker,
     RecognitionPolicy,
     RecognitionSession,
 )
@@ -48,9 +57,15 @@ RECOVERY_NAME = re.compile(r"ChamCong_Recovery(?:Check|New)_[0-9a-f]{8}\Z")
 MARKER = "chamcong-face-local"
 
 
-def recovery_counts(db):
-    return {model.__tablename__: db.scalar(select(func.count()).select_from(model))
-            for model in (Employee, FaceTemplate, ImportedFacePhoto, AttendanceEvent)}
+def recovery_counts(db, requested=None):
+    models = {model.__tablename__: model for model in (Employee, FaceTemplate, ImportedFacePhoto, AttendanceEvent,
+        PartnerVendor, PartnerBatch, PartnerWorker, PartnerEvent, PartnerCapture, PartnerCounter, PartnerDeviceBinding,
+        PartnerReportAdjustment, PartnerReportSnapshot)}
+    available = set(inspect(db.connection()).get_table_names())
+    names = set(requested) if requested is not None else set(models) & available
+    if not names <= set(models) or not names <= available:
+        raise ValueError("Backup contains unknown or missing count targets")
+    return {name: db.scalar(select(func.count()).select_from(models[name])) for name in sorted(names)}
 
 
 def connection_string(database=None):
@@ -97,7 +112,7 @@ def source_files(root):
     root = Path(root).resolve()
     selected = {}
     for directory, suffixes in (("backend/app", {".py"}), ("backend/migrations", {".py"}),
-                                 ("models", {".onnx", ".json", ".txt", ".md"}),
+                                 ("models", {".onnx", ".json", ".txt", ".md"}), ("docs", {".md"}),
                                  ("frontend/dist", None), ("frontend/src", {".ts", ".tsx", ".css"}),
                                  ("frontend/public", None)):
         for path in (root / directory).rglob("*"):
@@ -114,7 +129,7 @@ def source_files(root):
                  "import_employee_photos.py", "import_employee_dataset.py", "prepare_profile_references.py", "configure_trial_shift.py"):
         selected["scripts/" + name] = root / "scripts" / name
     selected["HUONG_DAN_VAN_HANH.md"] = root / "HUONG_DAN_VAN_HANH.md"
-    for optional in (".gitignore", "AGENTS.md", "KE_HOACH_TRIEN_KHAI.md", "README.md", "pyproject.toml",
+    for optional in (".gitignore", "AGENTS.md", "KE_HOACH_TRIEN_KHAI.md", "PHUONG_AN_CHAM_CONG_DOI_TAC.md", "README.md", "pyproject.toml",
                      "backend/requirements.in", "frontend/package.json", "frontend/package-lock.json",
                      "frontend/tsconfig.json", "frontend/tsconfig.app.json", "frontend/tsconfig.node.json",
                      "frontend/vite.config.ts", "frontend/index.html"):
@@ -229,6 +244,11 @@ def recovery_guard(db, subjects):
     db.execute(update(RecognitionPolicy).values(enabled=False))
     db.execute(update(RecognitionSession).where(RecognitionSession.state.in_(["pending", "verified"]))
                .values(state="rejected"))
+    available = set(inspect(db.connection()).get_table_names())
+    if "partner_captures" in available:
+        db.execute(update(PartnerCapture).where(PartnerCapture.state.in_(["pending", "verified"])).values(state="rejected"))
+    if "partner_device_bindings" in available:
+        db.execute(update(PartnerDeviceBinding).values(active=False))
     db.add(AuditLog(action="database_recovery_guard", details={"revoked_subjects_applied": affected,
                                                               "sessions_and_kiosk_tokens_revoked": True}))
     return affected
@@ -302,7 +322,7 @@ def restore_new_database(archive_path, *, key_path=None, key_password=None, targ
                         if marker != MARKER or db.scalar(text("SELECT version_num FROM alembic_version")) != manifest["schema_revision"]:
                             raise ValueError("Restored database ownership or schema mismatch")
                         before = db.scalar(select(func.count()).select_from(AttendanceEvent))
-                        snapshot_counts = recovery_counts(db)
+                        snapshot_counts = recovery_counts(db, manifest.get("row_counts", {}).keys())
                         if "row_counts" in manifest and snapshot_counts != manifest["row_counts"]:
                             raise ValueError("Restored database differs from its backup snapshot counts")
                         affected = recovery_guard(db, subjects)

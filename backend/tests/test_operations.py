@@ -37,6 +37,24 @@ def test_snapshot_reports_failed_dependencies_and_disk_without_sql_details(monke
     assert "backup_failed" in operations.snapshot(None, None, None, None)["alerts"]
 
 
+def test_operations_surfaces_partner_retention_failure_without_private_paths(client,monkeypatch):
+    browser,_=client
+    setup(browser)
+    monkeypatch.setattr(app.state,'partner_retention_error','temporary_biometric_cleanup_failed')
+    result=browser.get('/api/admin/operations/status').json()
+    assert result['partner_biometric_cleanup']['ready'] is False
+    assert 'partner_biometric_cleanup_failed' in result['alerts']
+
+
+def test_local_fallback_backup_does_not_hide_missing_configured_external_destination(monkeypatch,tmp_path):
+    monkeypatch.setattr(get_settings(),'runtime_dir',tmp_path)
+    monkeypatch.setattr(get_settings(),'backup_directory',tmp_path/'disconnected-destination')
+    monkeypatch.setattr(operations,'database_probe',lambda db:False)
+    assert 'backup_destination_unavailable' in operations.snapshot(None,None,None,None)['alerts']
+    get_settings().backup_directory.mkdir()
+    assert 'backup_destination_unavailable' not in operations.snapshot(None,None,None,None)['alerts']
+
+
 def test_backup_metadata_handles_age_encryption_invalid_time_and_private_path(tmp_path):
     now = datetime.now(UTC)
     backups = tmp_path / "backups"

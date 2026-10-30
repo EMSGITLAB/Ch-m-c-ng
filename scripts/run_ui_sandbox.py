@@ -50,7 +50,9 @@ with pyodbc.connect(connection_string, autocommit=True) as admin, contextlib.Exi
         connection = re.sub(r"(?i)DATABASE=[^;]+", "DATABASE=" + name, connection_string)
         url = URL.create("mssql+pyodbc", query={"odbc_connect": connection}).render_as_string(hide_password=False)
         env = dict(os.environ, CHAMCONG_DATABASE_URL=url, CHAMCONG_SESSION_SECRET=secrets.token_urlsafe(48),
-            CHAMCONG_ALLOWED_ORIGINS=json.dumps(["http://127.0.0.1:5174", "http://127.0.0.1:8011"]), PYTHONIOENCODING="utf-8")
+            CHAMCONG_ALLOWED_ORIGINS=json.dumps(["http://127.0.0.1:5174", "http://127.0.0.1:8011"]),
+            CHAMCONG_RUNTIME_DIR=str(private / name), CHAMCONG_BACKUP_DIRECTORY=str(private / name / "backups"),
+            PYTHONIOENCODING="utf-8")
         result = subprocess.run([sys.executable, "-m", "alembic", "-c", "backend/alembic.ini", "upgrade", "head"],
             cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace")
         if result.returncode:

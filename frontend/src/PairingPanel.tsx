@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 
-export type KioskDevice = { id: string; name: string; direction: 'in' | 'out'; active: boolean; paired: boolean };
+export type KioskDevice = { id: string; name: string; direction: 'in' | 'out'; active: boolean; paired: boolean; workflow?:'employee'|'partner'; partner_batch_id?:string|null };
 
-export function PairingPanel({ onDevice }: { onDevice: (device: KioskDevice | null) => void }) {
+export function PairingPanel({ onDevice, initiallyOpen=false, allowRePair=false, onPaired }: { onDevice: (device: KioskDevice | null) => void; initiallyOpen?: boolean; allowRePair?: boolean; onPaired?:()=>void }) {
   const [device, setDevice] = useState<KioskDevice | null>(null);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -26,11 +26,11 @@ export function PairingPanel({ onDevice }: { onDevice: (device: KioskDevice | nu
       const response = await fetch('/api/kiosk/pair', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Kiosk-Intent': 'pair-local-kiosk' }, body: JSON.stringify({ code }), signal: AbortSignal.timeout(15000) });
       const result = await response.json();
       if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Mã ghép cần đủ 8 chữ số.');
-      setDevice(result); onDevice(result); setCode('');
+      setDevice(result); onDevice(result); onPaired?.(); setCode(''); window.dispatchEvent(new Event('kiosk-device-changed'));
     } catch (e) { setError(e instanceof Error ? e.message : 'Không ghép được thiết bị.'); }
     finally { setBusy(false); }
   }
 
-  if (device) return <div className="paired-device"><span className="notice-dot" /><span>{device.name} · {device.direction === 'in' ? 'Điểm vào ca' : 'Điểm ra ca'} · Đã ghép quyền</span></div>;
-  return <details className="pairing-panel"><summary>Thiết lập điểm chấm công</summary><p>Lấy mã tại Quản trị → Thiết bị, rồi nhập một lần trên trình duyệt này.</p><form onSubmit={pair}><label>Mã ghép 8 số<input value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))} inputMode="numeric" pattern="[0-9]{8}" minLength={8} maxLength={8} autoComplete="off" required /></label><button disabled={busy}>{busy ? 'Đang ghép…' : 'Ghép thiết bị'}</button></form>{error && <div className="error" role="alert">{error}</div>}</details>;
+  if (device && !allowRePair) return <div className="paired-device"><span className="notice-dot" /><span>{device.name} · {device.direction === 'in' ? 'Điểm vào ca' : 'Điểm ra ca'} · Đã ghép quyền</span></div>;
+  return <details className="pairing-panel" open={initiallyOpen}><summary>{device ? 'Đã ghép: ' + device.name : 'Thiết lập điểm chấm công'}</summary>{device && <p>Trình duyệt này đã có quyền chấm công. Nhập mã mới nếu cần đổi hoặc ghép lại thiết bị.</p>}<p>Lấy mã tại Quản trị → Thiết bị, rồi nhập một lần trên trình duyệt này.</p><form onSubmit={pair}><label>Mã ghép 8 số<input value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))} inputMode="numeric" pattern="[0-9]{8}" minLength={8} maxLength={8} autoComplete="off" required /></label><button disabled={busy}>{busy ? 'Đang ghép…' : 'Ghép thiết bị'}</button></form>{error && <div className="error" role="alert">{error}</div>}</details>;
 }

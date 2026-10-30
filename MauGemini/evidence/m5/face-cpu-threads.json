@@ -1,0 +1,73 @@
+{
+  "original_threads": 14,
+  "results": [
+    {
+      "round": 1,
+      "threads": 14,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 164.83,
+      "p95_ms": 193.09
+    },
+    {
+      "round": 1,
+      "threads": 1,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 250.42,
+      "p95_ms": 264.25
+    },
+    {
+      "round": 1,
+      "threads": 2,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 259.56,
+      "p95_ms": 285.72
+    },
+    {
+      "round": 1,
+      "threads": 4,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 156.65,
+      "p95_ms": 176.28
+    },
+    {
+      "round": 2,
+      "threads": 14,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 112.83,
+      "p95_ms": 118.34
+    },
+    {
+      "round": 2,
+      "threads": 1,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 235.41,
+      "p95_ms": 250.33
+    },
+    {
+      "round": 2,
+      "threads": 2,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 245.25,
+      "p95_ms": 257.04
+    },
+    {
+      "round": 2,
+      "threads": 4,
+      "two_workers": true,
+      "samples": 20,
+      "mean_ms": 155.4,
+      "p95_ms": 174.22
+    }
+  ],
+  "licensed_public_fixture": true,
+  "embedding_cosine_threads_14_vs_4": 1.0,
+  "production_configuration_modified": false,
+  "accuracy_or_pad_validation": false
+}

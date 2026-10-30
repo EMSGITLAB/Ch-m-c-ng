@@ -1,0 +1,32 @@
+{
+  "stage": "P1 configuration complete; P2 face-store foundation only",
+  "backend_regression_passed": 330,
+  "native_only_skipped": 6,
+  "native_sql_passed": 229,
+  "native_nonlocal_network_attempts": 0,
+  "partner_focused_tests_passed": 13,
+  "temporary_face_store_tests_passed": 6,
+  "frontend_build_passed": true,
+  "ruff_passed": true,
+  "migration": "20261030_partner_batches",
+  "pre_migration_backup_verified": true,
+  "runtime_ready": true,
+  "seed_partner_code": "D23",
+  "real_batches_created": 0,
+  "real_worker_enrollments_created": 0,
+  "employee_data_counts_observed": {
+    "employees": 374,
+    "attendance_events": 33,
+    "face_templates": 368,
+    "imported_face_photos": 370
+  },
+  "browser_d23_and_partner_heading_verified": true,
+  "responsive_without_horizontal_overflow": [
+    768,
+    390
+  ],
+  "viewport_reset": true,
+  "partner_face_capture_available": false,
+  "partner_voice_available": false,
+  "accuracy_or_pad_validation": false
+}

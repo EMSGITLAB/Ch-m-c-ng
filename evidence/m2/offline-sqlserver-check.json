@@ -26,7 +26,14 @@
     "backend/tests/test_recovery_key.py",
     "backend/tests/test_recovery_key_api.py",
     "backend/tests/test_pilot_enrollment.py",
-    "backend/tests/test_profile_photos.py"
+    "backend/tests/test_profile_photos.py",
+    "backend/tests/test_dashboard_direction.py",
+    "backend/tests/test_attendance_scope.py",
+    "backend/tests/test_partner_admin.py",
+    "backend/tests/test_partner_attendance.py",
+    "backend/tests/test_partner_speech.py",
+    "backend/tests/test_partner_reports.py",
+    "backend/tests/test_partner_face_store.py"
   ],
   "result": "passed",
   "offline_network_guard": true,

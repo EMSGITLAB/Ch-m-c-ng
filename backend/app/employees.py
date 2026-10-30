@@ -1,6 +1,7 @@
 import csv
 import io
 import unicodedata
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
@@ -51,22 +52,22 @@ class EmployeePatch(BaseModel):
 
 def public_employee(employee,templates=0,collections=0,imported_photos=0,photo_id=None):
     return {"id":employee.id,"code":employee.code,"name":employee.name,"department":employee.department,
-            "active":employee.active,"template_count":templates,"collection_count":collections,"imported_photo_count":imported_photos,
+            "active":employee.active,"deleted_at":employee.deleted_at.isoformat() if employee.deleted_at else None,"template_count":templates,"collection_count":collections,"imported_photo_count":imported_photos,
             "profile_photo_url":f"/api/admin/imported-face-photos/{photo_id}/image" if photo_id else None,
             "created_at":employee.created_at.isoformat()}
 
 
 @router.get("/departments")
 def departments(db:Db,user:Admin):
-    return {"items":db.scalars(select(Employee.department).where(Employee.department!="")
+    return {"items":db.scalars(select(Employee.department).where(Employee.department!="",Employee.deleted_at.is_(None))
                               .distinct().order_by(Employee.department)).all()}
 
 
 @router.get("")
-def list_employees(db:Db,user:Admin,q:str="",active:bool|None=None,offset:int=0,limit:int=30):
+def list_employees(db:Db,user:Admin,q:str="",active:bool|None=None,offset:int=0,limit:int=30,deleted:bool=False):
     if offset<0 or not 1<=limit<=100 or len(q)>160:
         raise HTTPException(422,"Phạm vi tra cứu không hợp lệ.")
-    filters=[]
+    filters=[Employee.deleted_at.is_not(None) if deleted else Employee.deleted_at.is_(None)]
     if active is not None:
         filters.append(Employee.active==active)
     if q.strip():
@@ -105,6 +106,8 @@ def update_employee(employee_id:str,payload:EmployeePatch,db:Db,user:MutationAdm
         raise HTTPException(404,"Không tìm thấy nhân viên.")
     lock_employee(db,employee_id)
     db.refresh(employee)
+    if employee.deleted_at is not None:
+        raise HTTPException(409,"Hồ sơ đã xóa, chỉ giữ để tra cứu lịch sử chấm công.")
     changes=payload.model_dump(exclude_unset=True)
     if any(value is None for value in changes.values()):
         raise HTTPException(422,"Không để trống giá trị trường đang cập nhật.")
@@ -115,6 +118,24 @@ def update_employee(employee_id:str,payload:EmployeePatch,db:Db,user:MutationAdm
     db.commit()
     count=db.scalar(select(func.count()).select_from(FaceTemplate).where(FaceTemplate.employee_id==employee.id))
     return public_employee(employee,count)
+
+
+@router.delete("/{employee_id}")
+def delete_employee(employee_id:str,db:Db,user:MutationAdmin):
+    lock_calendar(db)
+    employee=db.get(Employee,employee_id)
+    if employee is None:
+        raise HTTPException(404,"Không tìm thấy nhân viên.")
+    lock_employee(db,employee_id)
+    db.refresh(employee)
+    if employee.deleted_at is None:
+        employee.active=False
+        employee.deleted_at=datetime.now(UTC)
+        employee.biometric_revision+=1
+        db.add(AuditLog(action="employee_delete",entity_id=employee.id,
+                        details={"soft_delete":True,"attendance_preserved":True}))
+    db.commit()
+    return {"deleted":True,"employee_id":employee.id,"attendance_preserved":True}
 
 
 @router.post("/import-csv",status_code=201)

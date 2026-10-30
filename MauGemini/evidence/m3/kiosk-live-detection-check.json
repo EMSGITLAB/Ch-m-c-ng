@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-28",
+  "source": "read_only_DOM_on_live_laptop_camera",
+  "video_width": 1280,
+  "video_height": 720,
+  "automatic_camera_started": true,
+  "face_marker_present_in_two_observations": true,
+  "face_marker_position_changed_between_observations": true,
+  "manual_capture_button_present": false,
+  "oval_present": false,
+  "feedback_reports_detection_and_no_attendance": true,
+  "images_identities_vectors_exported": false,
+  "identity_accuracy_validated": false,
+  "pad_validated": false,
+  "ipad_android_hardware_tested": false
+}

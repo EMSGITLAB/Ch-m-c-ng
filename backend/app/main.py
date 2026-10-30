@@ -20,6 +20,7 @@ from .biometrics import router as biometrics_router
 from .calibration_api import router as calibration_router
 from .collections import router as collections_router
 from .config import get_settings
+from .dashboard import router as dashboard_router
 from .database import get_engine
 from .devices import admin_router as device_admin_router
 from .devices import kiosk_router
@@ -30,6 +31,12 @@ from .imported_photos import router as imported_photo_router
 from .operations import router as operations_router
 from .pad_api import router as pad_router
 from .pad_engine import PadEngine
+from .partner_admin import router as partner_admin_router
+from .partner_kiosk import admin_router as partner_admission_router
+from .partner_kiosk import router as partner_kiosk_router
+from .partner_reports import router as partner_reports_router
+from .partner_retention import expire_partner_faces
+from .partner_speech import PartnerSpeech, SpeechError
 from .periods import router as period_router
 from .pilot_enrollment import router as pilot_router
 from .profile_photos import router as profile_photo_router
@@ -47,6 +54,21 @@ async def lifespan(application:FastAPI):
     application.state.face_engine=None
     application.state.face_error="model_not_initialized"
     settings=get_settings()
+    async def partner_retention_loop():
+        while True:
+            result = await run_in_threadpool(expire_partner_faces, settings.runtime_dir)
+            application.state.partner_retention_error = None if result["ready"] else "temporary_biometric_cleanup_failed"
+            await asyncio.sleep(30)
+    partner_retention = asyncio.create_task(partner_retention_loop())
+    application.state.partner_speech = PartnerSpeech(settings.models_dir / "speech" / "faster-whisper-small",
+        threads=settings.speech_threads, timeout=settings.speech_timeout_seconds)
+    async def preload_partner_speech():
+        try:
+            await run_in_threadpool(application.state.partner_speech.warmup)
+        except SpeechError:
+            pass  # Manual name entry remains available if local STT is unavailable.
+    speech_preload = (asyncio.create_task(preload_partner_speech()) if settings.speech_prewarm_enabled
+                      and (settings.models_dir / "speech/faster-whisper-small/manifest.json").is_file() else None)
     application.state.attendance_policy_id=(
         settings.functional_trial_policy_id if settings.functional_trial_enabled else None
     )
@@ -65,16 +87,29 @@ async def lifespan(application:FastAPI):
     try:
         yield
     finally:
+        if speech_preload:
+            speech_preload.cancel()
+            try:
+                await speech_preload
+            except asyncio.CancelledError:
+                pass
+        partner_retention.cancel()
+        try:
+            await partner_retention
+        except asyncio.CancelledError:
+            pass
+        await run_in_threadpool(application.state.partner_speech.close)
         application.state.face_engine=None
         application.state.pad_engine=None
 
 
 capture_slots=threading.BoundedSemaphore(2)
 
-app = FastAPI(title="Chấm công local", version="0.2.0", docs_url="/api/docs", openapi_url="/api/openapi.json",lifespan=lifespan)
+app = FastAPI(title="OnTime", version="0.2.0", docs_url="/api/docs", openapi_url="/api/openapi.json",lifespan=lifespan)
 app.add_middleware(TrustedHostMiddleware,allowed_hosts=get_settings().allowed_hosts)
 app.include_router(auth_router)
 app.include_router(employee_router)
+app.include_router(dashboard_router)
 app.include_router(device_admin_router)
 app.include_router(kiosk_router)
 app.include_router(collections_router)
@@ -93,6 +128,10 @@ app.include_router(recognition_admin_router)
 app.include_router(pad_router)
 app.include_router(pilot_router)
 app.include_router(operations_router)
+app.include_router(partner_admin_router)
+app.include_router(partner_admission_router)
+app.include_router(partner_kiosk_router)
+app.include_router(partner_reports_router)
 
 
 @app.exception_handler(SQLAlchemyError)

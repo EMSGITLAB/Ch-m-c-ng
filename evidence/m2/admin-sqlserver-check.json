@@ -24,9 +24,16 @@
     "backend/tests/test_recovery_privacy.py",
     "backend/tests/test_native_backup.py",
     "backend/tests/test_recovery_key.py",
-    "backend/tests/test_recovery_key_api.py"
+    "backend/tests/test_recovery_key_api.py",
+    "backend/tests/test_pilot_enrollment.py",
+    "backend/tests/test_profile_photos.py",
+    "backend/tests/test_dashboard_direction.py",
+    "backend/tests/test_attendance_scope.py",
+    "backend/tests/test_partner_admin.py",
+    "backend/tests/test_partner_attendance.py"
   ],
   "result": "passed",
+  "offline_network_guard": false,
   "live_database_modified": false,
   "accuracy_or_pad_validation": false
 }

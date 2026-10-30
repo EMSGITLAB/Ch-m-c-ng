@@ -2,8 +2,31 @@ from datetime import UTC, datetime, timedelta
 
 from app.auth import COOKIE
 from app.config import get_settings
-from app.models import AdminUser, AuditLog, AuthSession
+from app.models import AdminUser, AuditLog, AuthSession, Employee
 from sqlalchemy import select
+
+
+def test_employee_delete_requires_admin_csrf_and_preserves_identity(client):
+    browser, factory = client
+    assert browser.delete("/api/admin/employees/missing").status_code == 401
+    csrf = setup(browser)
+    headers = {"X-CSRF-Token": csrf}
+    person = browser.post("/api/admin/employees", json={"code": "DEL01", "name": "Hồ sơ thử xóa"}, headers=headers).json()
+    url = "/api/admin/employees/"+person["id"]
+    assert browser.delete(url).status_code == 403
+    result = browser.delete(url, headers=headers)
+    assert result.status_code == 200
+    assert result.json()["attendance_preserved"]
+    assert browser.delete(url, headers=headers).json() == result.json()
+    assert browser.get("/api/admin/employees").json()["total"] == 0
+    removed = browser.get("/api/admin/employees?deleted=true").json()["items"]
+    assert len(removed) == 1 and removed[0]["deleted_at"] and not removed[0]["active"]
+    assert browser.patch(url, json={"active": True}, headers=headers).status_code == 409
+    assert browser.post("/api/admin/employees", json={"code": "DEL01", "name": "Người khác"}, headers=headers).status_code == 409
+    with factory() as db:
+        employee = db.get(Employee, person["id"])
+        assert employee is not None and employee.biometric_revision == 1
+        assert len(db.scalars(select(AuditLog).where(AuditLog.action == "employee_delete")).all()) == 1
 
 
 def setup(browser):

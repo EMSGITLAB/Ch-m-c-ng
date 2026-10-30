@@ -1,0 +1,11 @@
+# Danh sách nhận diện local — kiểm chứng chức năng, 29/10/2026
+
+Đã bổ sung API/UI đưa bộ tham chiếu hoàn tất mới nhất vào chấm công, cập nhật mẫu và loại từng hồ sơ khỏi danh sách. Cấu hình có phiên bản mới cho mỗi thay đổi; ngưỡng/model được kế thừa từ cấu hình đã thử. Ghim template/revision/checksum, loại hồ sơ bị vô hiệu/purge khỏi bộ mẫu hiện hành, kiểm tra lại ảnh hiệu chỉnh hiện có trước khi xuất bản. Bộ tham chiếu trùng/không phân biệt được hoặc làm ảnh kiểm tra cũ nhận sai bị từ chối, giữ cấu hình trước.
+
+- Tạo/thay danh sách không cần restart hoặc sửa `.env`; startup cũ một người vẫn tương thích. Sau restore, trạng thái dừng và quyền cũ vẫn dừng; quản trị có thể chủ động đưa mẫu hợp lệ vào lại mà không tự bật quyền cũ.
+- Thay policy hủy phiên chưa ghi công của cấu hình trước, tránh chặn kiosk chờ hết TTL. Biên nhận đã ghi còn truy vấn/gửi lại được; lịch sử không bị xóa khi loại mẫu khỏi danh sách.
+- Test cô lập: danh sách 100 danh tính, xác định từng người từ vector giả lập, chuỗi 3 ảnh và ghi đúng 100 sự kiện đạt trên SQLite và SQL Server. Có kiểm tra auth/CSRF, stale policy/revision, cách ly evaluation, từ chối mẫu trùng và bảo toàn ảnh kiểm tra độc lập. Đây là kiểm chứng chương trình, không phải 100 người thật hoặc độ chính xác AI.
+- Preview dữ liệu thật chỉ đọc: 16 hồ sơ tham chiếu, 11 ảnh hiệu chỉnh của 1 người vẫn nhận đúng ở cấu hình dự kiến; 15 người khác chưa có ảnh kiểm tra độc lập. Không xuất bản policy, đổi ngưỡng hoặc xuất ảnh/vector/danh tính. Dữ liệu đang bật vẫn giữ 1 người đã thử camera thực tế. Xem `pilot-reference-preview.json`.
+- Đã bỏ đọc/xây lại toàn bộ gallery nhiều lần trong cùng một frame: preflight vẫn kiểm tra quyền/config, gallery dùng để quyết định danh tính được đọc lại trong calendar gate. Không thêm cache lâu dài hoặc bỏ kiểm tra thu hồi mẫu. Các ca TOCTOU/thu hồi/nonce/row-lock vẫn được chạy.
+
+Mã chính: `pilot_enrollment.py`, `pilot_gallery.py`, `policy_selection.py`, `PilotEnrollmentPanel.tsx`. Test: `test_pilot_enrollment.py`, `test_functional_trial.py`, `test_recognition_sequence.py`, `test_biometrics.py`. Kết quả hiện tại: 278 backend passed + 6 ca cần native; SQL Server cô lập 191 passed (gồm native và luồng 100 hồ sơ), 26 Node passed, frontend build/Ruff đạt. Chất lượng theo nhóm/PAD vẫn thử riêng theo kế hoạch.

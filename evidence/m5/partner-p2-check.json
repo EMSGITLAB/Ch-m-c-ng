@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "phase": "P2/P3 technical implementation",
+  "date": "2026-10-30",
+  "live": {
+    "migration": "20261030_partner_admission",
+    "employees": 374,
+    "partner_batches": 0,
+    "partner_workers": 0,
+    "partner_events": 0,
+    "d23_vendor_present": true,
+    "recognition_ready": true,
+    "employee_attendance_enabled": true,
+    "speech_weights_present": true
+  },
+  "checks": {
+    "backend_regression_passed": 355,
+    "backend_native_only_skipped": 8,
+    "native_sql_passed": 250,
+    "native_nonlocal_attempts": 0,
+    "frontend_passed": 45,
+    "latest_partner_targeted_passed": 27,
+    "latest_targeted_native_only_skipped": 2,
+    "night_and_retention_passed": 9,
+    "frontend_build": true,
+    "ruff": true,
+    "responsive_widths": [
+      768,
+      390
+    ],
+    "viewport_reset": true
+  },
+  "database_backup_verified_before_migration": true,
+  "no_cloud_speech_or_face_api": true,
+  "speech_model_revision": "536b0662742c02347bc0e980a01041f333bce120",
+  "audio_persisted": false,
+  "biometrics_in_backup": false,
+  "real_partner_worker_validation": false,
+  "accuracy_or_pad_validation": false,
+  "remaining": [
+    "P4 reports adjustments immutable close CSV restore",
+    "P5 real person camera microphone manual name in/out audio"
+  ]
+}

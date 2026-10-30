@@ -92,6 +92,8 @@ def snapshot(db, engine, pad_engine, policy_id):
             alerts.append("backup_overdue")
     if (settings.runtime_dir / "backups/last-backup-error.json").is_file():
         alerts.append("backup_failed")
+    if settings.backup_directory and not settings.backup_directory.is_dir():
+        alerts.append("backup_destination_unavailable")
     if backup["available"] and backup["encrypted"] and not key_preserved:
         alerts.append("recovery_key_not_preserved")
     return {"checked_at": now.isoformat(), "database_ok": database_ok,
@@ -105,9 +107,14 @@ def snapshot(db, engine, pad_engine, policy_id):
 
 @router.get("/status")
 def status(request: Request, db: Db, user: Admin):
-    return snapshot(db, getattr(request.app.state, "face_engine", None),
+    result = snapshot(db, getattr(request.app.state, "face_engine", None),
                     getattr(request.app.state, "pad_engine", None),
                     getattr(request.app.state, "attendance_policy_id", None))
+    ready = not bool(getattr(request.app.state, "partner_retention_error", None))
+    result["partner_biometric_cleanup"] = {"ready": ready, "interval_seconds": 30, "retention_hours": 48}
+    if not ready:
+        result["alerts"].append("partner_biometric_cleanup_failed")
+    return result
 
 
 @router.post("/recovery-key/export")

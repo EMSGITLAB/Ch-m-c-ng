@@ -1,0 +1,35 @@
+{
+  "8000": {
+    "ready": true,
+    "attendance_enabled": true,
+    "participants": 368,
+    "admin_auth_required": true,
+    "unpaired_direction_change_rejected": true,
+    "compiled_or_dev_frontend_served": true
+  },
+  "5173": {
+    "ready": true,
+    "attendance_enabled": true,
+    "participants": 368,
+    "admin_auth_required": true,
+    "unpaired_direction_change_rejected": true,
+    "compiled_or_dev_frontend_served": true
+  },
+  "source_data": {
+    "before": {
+      "employees": 374,
+      "face_templates": 368,
+      "imported_face_photos": 370,
+      "attendance_events": 24
+    },
+    "after": {
+      "employees": 374,
+      "face_templates": 368,
+      "imported_face_photos": 370,
+      "attendance_events": 24
+    },
+    "counts_unchanged": true,
+    "ui_test_records_in_live_database": false
+  },
+  "models_and_threshold_unchanged": true
+}

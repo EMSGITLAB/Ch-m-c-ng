@@ -1,0 +1,48 @@
+{
+  "source_file": "HopLe.mp3",
+  "source_bytes": 8448,
+  "source_sha256": "a74519c59746dba112ed25da700a0e255b35b1bd267d9f6eb1c88985c1f51432",
+  "output_file": "hop-le-user-fast-135.wav",
+  "speed_multiplier": 1.35,
+  "pitch_preserved": true,
+  "local_ffmpeg_filters": "atempo=1.35,alimiter=limit=0.97:level=false:latency=true",
+  "external_api_used": false,
+  "source_decoded": {
+    "sample_rate": 44100,
+    "duration_seconds": 1.056,
+    "peak_dbfs": -7.09,
+    "rms_dbfs": -20.28,
+    "clipped_samples": 0,
+    "sha256": "394b2171306f8c852d966c784e197cec4a9b35e61610f21145828d13441ce783"
+  },
+  "output": {
+    "sample_rate": 44100,
+    "duration_seconds": 0.7754,
+    "peak_dbfs": -7.36,
+    "rms_dbfs": -20.27,
+    "clipped_samples": 0,
+    "sha256": "481cf20f0331a0834d39aa108082b539c5b343d6914ddf649c4422a64e480e7e"
+  },
+  "physical_speaker_confirmation": false,
+  "http_serving_checks": [
+    {
+      "port": 5173,
+      "status": 200,
+      "mime": "audio/wav",
+      "checksum_matches": true,
+      "range_status": 206
+    },
+    {
+      "port": 8000,
+      "status": 200,
+      "mime": "audio/wav",
+      "checksum_matches": true,
+      "range_status": 206
+    }
+  ],
+  "compiled_bundle_references_user_audio": true,
+  "frontend_build_passed": true,
+  "backend_tests_passed": 317,
+  "backend_tests_skipped_native_only": 6,
+  "node_tests_passed": 37
+}

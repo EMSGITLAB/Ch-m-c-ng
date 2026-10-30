@@ -17,7 +17,7 @@
 | TypeScript | Apache 2.0 | `frontend/package-lock.json` |
 | Vite và plugin React | MIT | `frontend/package-lock.json` |
 
-Âm báo `frontend/public/audio/hop-le.wav` và bản dứt khoát đang dùng `hop-le-dut-khoat.wav` được tổng hợp offline bằng eSpeak NG từ câu “Hợp lệ”. Công cụ eSpeak NG (GPL-3.0-or-later, [nguồn chính thức](https://github.com/espeak-ng/espeak-ng)) chỉ dùng lúc phát triển; không có executable/DLL/data eSpeak trong frontend phân phối. Bản dứt khoát được cân chỉnh âm lượng bằng FFmpeg có sẵn trên máy phát triển, không phân phối FFmpeg trong ứng dụng. Nguồn, tham số và checksum ở `frontend/public/audio/README.md`; thiết bị chỉ phát tệp local, không gọi dịch vụ giọng đọc.
+Âm báo `frontend/public/audio/hop-le.wav` và bản dứt khoát cũ `hop-le-dut-khoat.wav` được tổng hợp offline bằng eSpeak NG từ câu “Hợp lệ”. Công cụ eSpeak NG (GPL-3.0-or-later, [nguồn chính thức](https://github.com/espeak-ng/espeak-ng)) chỉ dùng lúc phát triển; không có executable/DLL/data eSpeak trong frontend phân phối. Bản dứt khoát được cân chỉnh âm lượng bằng FFmpeg có sẵn trên máy phát triển, không phân phối FFmpeg trong ứng dụng. Nguồn, tham số và checksum ở `frontend/public/audio/README.md`; thiết bị chỉ phát tệp local, không gọi dịch vụ giọng đọc.
 
 Danh mục đầy đủ theo metadata của các gói đã cài nằm trong `evidence/m0/python-licenses.json` và `evidence/m0/frontend-licenses.json`. Metadata không thay thế các tệp LICENSE/NOTICE trong thư viện; khi đóng gói phân phối cần giữ các thông báo đó.
 
@@ -33,3 +33,11 @@ Sao lưu và sổ dấu xóa sử dụng `cryptography` 50.0.2, giấy phép `Ap
 ## MediaPipe — khung bám mặt trong trình duyệt
 
 `@mediapipe/tasks-vision` 1.2.0 và BlazeFace short-range float16 phiên bản 1, Apache-2.0. Chỉ tạo vị trí khung mặt trực quan; không quyết định danh tính/ghi công. JS, WASM và model được phục vụ từ `frontend/public/vision`, không CDN/API bên ngoài. Giấy phép, model card và SHA-256 từng tệp trong cùng thư mục. Nguồn model: https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite . Mô hình nhận diện YuNet/SFace và ngưỡng trên máy chủ giữ nguyên.
+
+Âm báo đang dùng `hop-le-user-fast-135.wav` được chuyển từ HopLe.mp3 do người dùng cung cấp, tăng tốc 1,35 lần giữ cao độ bằng FFmpeg local. Không dùng eSpeak hoặc dịch vụ TTS để thay giọng nguồn. FFmpeg chỉ dùng lúc phát triển; ứng dụng phát WAV local. Thông số/checksum ở frontend/public/audio/README.md.
+
+## Nhận họ tên qua micro local
+
+`faster-whisper` 1.2.1 và model đa ngôn ngữ `Systran/faster-whisper-small` (MIT), revision `536b0662742c02347bc0e980a01041f333bce120`. CTranslate2 chạy CPU INT8; ONNX Runtime dùng VAD với telemetry tắt. PyAV giải mã audio trong bộ nhớ bằng thư viện FFmpeg đi kèm wheel. Giữ LICENSE/NOTICE của các wheel và thư viện phụ thuộc, gồm cả FFmpeg trong PyAV, khi đóng gói; không loại bỏ giấy phép khỏi bộ cài offline.
+
+Nguồn: [faster-whisper](https://github.com/SYSTRAN/faster-whisper), [model](https://huggingface.co/Systran/faster-whisper-small), [CTranslate2](https://github.com/OpenNMT/CTranslate2), [PyAV](https://github.com/PyAV-Org/PyAV). Phiên bản phụ thuộc khóa tại `backend/requirements.lock`; checksum được xác minh trong `models/speech/faster-whisper-small/manifest.json`. Runtime chỉ dùng model local, không tự tải hoặc gọi API. Audio không ghi ra đĩa, kết quả chỉ là tên nháp cần xác nhận; chưa nghiệm thu độ chính xác họ tên với người thật.

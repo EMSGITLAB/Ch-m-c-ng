@@ -1,0 +1,45 @@
+{
+  "brand": "OnTime",
+  "approved_concept": 2,
+  "backend_tests_passed": 317,
+  "backend_native_only_skipped": 6,
+  "frontend_build_passed": true,
+  "ruff_passed": true,
+  "browser_header_logo_loaded": true,
+  "browser_kiosk_and_admin_brand_checked": true,
+  "browser_document_title": "OnTime — Chấm công khuôn mặt",
+  "responsive_widths_without_horizontal_overflow": [
+    768,
+    390
+  ],
+  "temporary_viewport_reset": true,
+  "vector_assets": 5,
+  "png_assets": 5,
+  "http_checks": [
+    {
+      "port": 5173,
+      "html_title": "OnTime",
+      "brand_assets_checksum_verified": 10,
+      "manifest_valid": true
+    },
+    {
+      "port": 8000,
+      "html_title": "OnTime",
+      "brand_assets_checksum_verified": 10,
+      "manifest_valid": true
+    }
+  ],
+  "api_title": "OnTime",
+  "runtime_ready": true,
+  "observed_data_counts": {
+    "employees": 374,
+    "attendance_events": 33,
+    "face_templates": 368,
+    "imported_face_photos": 370
+  },
+  "database_migrations_for_branding": false,
+  "recognition_model_or_threshold_changed": false,
+  "functional_flow_changed": false,
+  "external_runtime_assets": false,
+  "screenshot": "evidence/m5/ontime-header.png"
+}

@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-29",
+  "workspace_json_valid": true,
+  "task_dependencies_and_launch_tasks_resolved": true,
+  "project_python_interpreter_exists": true,
+  "server_ready_regex_matches_uvicorn_output": true,
+  "uvicorn_no_use_colors_option_exists": true,
+  "python_and_debugger_extensions_installed": true,
+  "powershell_51_run_helper_restart_passed": true,
+  "localhost_8000_health_ready_after_restart": true,
+  "capture_max_edge_after_restart": 1280,
+  "actual_vscode_f5_ui_automation_tested": false,
+  "database_service_stopped": false
+}

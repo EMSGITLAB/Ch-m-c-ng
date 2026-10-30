@@ -1,0 +1,67 @@
+/* Unified Calibration & AI Verification Styling (Slate & Emerald System) */
+
+.calibration-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calibration-panel h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 4px 0 8px;
+  color: var(--text-admin-main);
+}
+
+.calibration-panel h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0 10px;
+  color: var(--text-admin-main);
+}
+
+.calibration-panel details {
+  background: #ffffff;
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.calibration-panel details > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--brand-slate-900);
+}
+
+.calibration-coverage {
+  margin: 18px 0 24px;
+  padding: 20px;
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  background: var(--brand-slate-50);
+}
+
+.calibration-coverage h3 {
+  margin: 0 0 12px;
+}
+
+.calibration-coverage .employee-table {
+  max-height: 420px;
+  overflow: auto;
+  margin-top: 14px;
+}
+
+.calibration-coverage .text-button {
+  white-space: normal;
+  min-width: 90px;
+}
+
+.calibration-coverage .pagination {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}

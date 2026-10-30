@@ -19,7 +19,11 @@ if not release.is_relative_to((ROOT / ".runtime/releases").resolve()):
 manifest = json.loads((release / "release-manifest.json").read_text(encoding="utf-8"))
 for name, expected in manifest["files"].items():
     path = (release / name).resolve()
-    if not path.is_relative_to(release) or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+    if not path.is_relative_to(release):
+        raise ValueError("Release path escapes its root")
+    with path.open("rb") as source:
+        actual = hashlib.file_digest(source, "sha256").hexdigest()
+    if actual != expected:
         raise ValueError("Release checksum mismatch")
     if path.name == ".env" or path.suffix in {".bak", ".dump"} or name.startswith(("data/", "evidence/", "logs/")):
         raise ValueError("Private state found in release")
@@ -64,11 +68,17 @@ with TestClient(app) as client:
     for path in Path("frontend/dist").rglob("*"):
         if path.is_file():
             assert client.get("/"+path.relative_to("frontend/dist").as_posix()).status_code==200
-    for path in ("/.env","/models/manifest.json","/backend/app/models.py"):
+    for path in ("/.env","/models/manifest.json","/backend/app/models.py","/models/speech/faster-whisper-small/model.bin"):
         assert client.get(path).status_code==404
     assert client.get("/health/live").status_code==200
     status=client.get("/api/system/status").json()
     assert status["attendance_enabled"] is False
+    if Path('models/speech/faster-whisper-small/manifest.json').is_file():
+        from app.partner_speech import validate_model
+        validate_model(Path('models/speech/faster-whisper-small'))
+        app.state.partner_speech.timeout=60
+        draft=app.state.partner_speech.transcribe(Path('frontend/dist/audio/hop-le-user-fast-135.wav').read_bytes())
+        assert draft and len(draft)<=160
 app.dependency_overrides.clear()
 isolated.dispose()
 from app.native_backup import source_files
@@ -93,6 +103,7 @@ report = {"release": args.name, "manifest_files_verified": len(manifest["files"]
           "compiled_frontend_and_audio_served_by_backend": True,
           "private_paths_denied": True, "external_python_network_blocked": True,
           "native_backup_source_helpers_present": True,
+          "relocated_offline_speech_pipeline": manifest.get("local_speech_model_included",False),
           "isolated_smoke_database": True, "verification_venv_outside_public_release": True,
           "live_database_opened": False,
           "private_data_bundled": False, "live_database_modified": False}

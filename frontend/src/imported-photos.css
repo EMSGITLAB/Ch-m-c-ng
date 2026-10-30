@@ -1,1 +1,57 @@
-.imported-photo-section{margin:28px 0;padding:20px;border:1px solid #d7e1ce;border-radius:10px;background:#f8faf4}.imported-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,220px));gap:18px}.imported-photo-grid figure{margin:0}.imported-photo-grid img{width:100%;height:220px;object-fit:contain;background:#e8eddf;border-radius:8px}.imported-photo-grid figcaption{font-size:12px;color:#385537;line-height:1.6;margin-top:10px}.imported-photo-grid figcaption p{margin:6px 0}.imported-photo-section input[type=file]{max-width:100%;font-size:12px}.imported-photo-section .employee-table{margin-top:14px}
+/* Unified Imported Face Photos Styling (Slate & Emerald System) */
+
+.imported-photo-section {
+  margin: 24px 0;
+  padding: 22px;
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  background: var(--brand-slate-50);
+}
+
+.imported-photo-section h3 {
+  margin-top: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.imported-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 220px));
+  gap: 18px;
+}
+
+.imported-photo-grid figure {
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+
+.imported-photo-grid img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  background: var(--brand-slate-100);
+  border-radius: var(--radius-xs);
+}
+
+.imported-photo-grid figcaption {
+  font-size: 12.5px;
+  color: var(--text-admin-main);
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.imported-photo-grid figcaption p {
+  margin: 4px 0 0;
+  color: var(--text-admin-muted);
+}
+
+.imported-photo-section input[type="file"] {
+  max-width: 100%;
+}
+
+.imported-photo-section .employee-table {
+  margin-top: 14px;
+}

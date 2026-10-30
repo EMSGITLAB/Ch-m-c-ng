@@ -1,0 +1,16 @@
+{
+  "encrypted_archive_bytes": 60567588,
+  "checksum_and_authentication_verified": true,
+  "restored_into_new_isolated_database": true,
+  "existing_target_refused": true,
+  "backup_snapshot_counts_verified_before_recovery_guard": true,
+  "source_counts_unchanged": true,
+  "restored_counts_match_backup": true,
+  "models_config_key_and_compiled_frontend_restored": true,
+  "deletion_ledger_applied": true,
+  "old_sessions_kiosk_tokens_and_policies_disabled": true,
+  "local_drill_seconds": 14.71,
+  "external_storage_confirmed": true,
+  "physical_vm_restore_tested": false,
+  "identities_images_vectors_in_evidence": false
+}

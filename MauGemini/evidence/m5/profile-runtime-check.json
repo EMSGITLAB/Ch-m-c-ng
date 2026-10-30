@@ -1,0 +1,35 @@
+{
+  "5173": {
+    "ready": true,
+    "attendance_enabled": true,
+    "participants": 368,
+    "local_worker_checksum_verified": true,
+    "admin_auth_required": true
+  },
+  "8000": {
+    "ready": true,
+    "attendance_enabled": true,
+    "participants": 368,
+    "local_worker_checksum_verified": true,
+    "admin_auth_required": true
+  },
+  "current_policy": {
+    "participants": 368,
+    "templates": 368,
+    "group_accuracy_validated": false,
+    "pad_validated": false
+  },
+  "approved_sample_shift": {
+    "days_with_schedule": 2,
+    "expected_minutes": 480,
+    "unassigned_events": 1,
+    "report_export_bytes": 1677,
+    "actual_attendance_completeness_not_inferred": true,
+    "period_finalized": false,
+    "no_events_created_by_check": true
+  },
+  "portraits": {
+    "profiles": 374,
+    "profiles_with_displayable_photo": 370
+  }
+}

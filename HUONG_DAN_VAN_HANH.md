@@ -1,4 +1,4 @@
-# Vận hành bản thử chấm công local
+# Vận hành OnTime — Chấm công khuôn mặt
 
 ## Bản hiện tại
 
@@ -18,7 +18,7 @@ Toàn bộ ảnh, vector, model và database xử lý local. Không Docker hoặ
 4. Chỉ khi máy chủ đã lưu biên nhận mới hiện tên và đọc **Hợp lệ**. Lượt lặp trong khoảng chống trùng trả biên nhận cũ.
 5. Khi mất phản hồi, giữ nguyên trang để ứng dụng truy vấn lại cùng mã yêu cầu; không tự ghi công khi offline.
 
-Màn hình chấm công bố trí như thiết bị chuyên dụng: đồng hồ/lời chào ở trái, camera toàn cảnh ở giữa, **Vừa ghi nhận** bên phải và kết quả ở dưới. Cột bên phải chỉ hiển thị tối đa 4 biên nhận đã được máy chủ xác nhận trong phiên mở trang này, dùng tên viết tắt làm ảnh đại diện; không phải danh sách chấm công toàn cơ quan. Danh sách chỉ giữ trong bộ nhớ trình duyệt và xóa khi tải lại/đổi thiết bị. Xem lịch sử đầy đủ tại Quản trị. **Tùy chọn thiết bị** chứa Tắt camera và Thử giọng đọc, không cần mở để chấm công tự động. Màn hình hẹp chuyển cột lượt gần đây xuống dưới camera.
+Màn hình chấm công bố trí như thiết bị chuyên dụng: đồng hồ/lời chào ở trái, camera toàn cảnh ở giữa, **Vừa ghi nhận** bên phải và kết quả ở dưới. Cột bên phải chỉ hiển thị tối đa 4 biên nhận đã được máy chủ xác nhận trong phiên mở trang này, dùng tên viết tắt làm ảnh đại diện; không phải danh sách chấm công toàn cơ quan. Danh sách chỉ giữ trong bộ nhớ trình duyệt và xóa khi tải lại/đổi thiết bị. Xem lịch sử đầy đủ tại Quản trị. **⚙ Tùy chọn** chứa Bật/Tắt camera, đổi camera, Ghép thiết bị và Thử giọng đọc, không cần mở để chấm công tự động. Màn hình hẹp chuyển cột lượt gần đây xuống dưới camera.
 
 ### Build và chạy từ VS Code
 
@@ -167,3 +167,32 @@ Vào Quản trị → Nhân viên → Thêm nhân viên hoặc Sửa hồ sơ. C
 Với dữ liệu ảnh đã nhập trước đây, chạy `scripts/prepare_profile_references.py` bằng Python trong venv để xem trước; thêm `--apply` để tạo mẫu và công bố một phiên danh sách mới. Công cụ giữ mẫu đang hoạt động, kiểm tra ảnh và ảnh hiệu chỉnh sẵn có, giữ model/ngưỡng nhận diện. Nên có backup mã hóa trước khi cập nhật hàng loạt. Nhật ký loại ảnh lưu trong database; không xuất ảnh/vector ra ngoài.
 
 Màn hình chấm công dùng bộ dò vị trí khuôn mặt chạy bằng worker trên trình duyệt (JS/WASM/model local), tối đa 10 khung/giây; máy chủ vẫn kiểm tra danh tính và ghi công từ ảnh toàn cảnh. Khi trình duyệt không hỗ trợ bộ dò nhanh, khung vị trí dùng phản hồi máy chủ. Khung bám mặt chưa phải thông báo chấm công hợp lệ; chỉ biên nhận máy chủ mới hiện tên và phát âm báo.
+
+
+## Giao diện theo mẫu Gemini
+
+Ứng dụng có các màn hình Chấm công nội bộ, Chấm công đối tác và Quản trị (Admin), cùng nút toàn màn hình. Trên di động, thanh điều hướng nằm dưới. Quản trị mở trang Tổng quan với tổng nhân sự/nhân sự hoạt động, lượt chấm trong ngày theo múi giờ cấu hình và số điểm đang liên lạc; số liệu đọc từ SQL Server local.
+
+Ghép trình duyệt tại Quản trị → Thiết bị Kiosk: tạo thiết bị/lấy mã một lần, nhập mã vào thẻ “Cấu hình điểm chấm công cho thiết bị”. Trên kiosk đã ghép, chọn Vào ca hoặc Ra ca để thay chiều ghi công. Máy chủ xác nhận chiều mới trước khi cập nhật màn hình; các phiên nhận diện dở theo chiều cũ bị hủy, biên nhận đã ghi vẫn tra cứu được.
+
+Nút “⚙ Tùy chọn” luôn hiện trên đầu vùng chấm công; bấm để hiện Bật/Tắt camera, đổi camera, Ghép thiết bị và Thử giọng đọc. Các nút điều khiển được ẩn mặc định. Nhận diện thử dùng camera trực tiếp và ghi công theo kết quả thật của máy chủ. Thử giọng đọc chỉ phát âm thanh và không ghi lượt. Giao diện không có API giả hoặc chức năng chọn tên người để tự tạo biên nhận.
+
+Khung trang trí trên kiosk lấy từ mẫu Gemini. Video và khung bám mặt vẫn hiển thị toàn cảnh, căn theo đúng tỷ lệ camera; không áp oval thu mẫu vào việc chấm công. Các ảnh khuôn mặt, vector và âm báo đều phục vụ local.
+
+
+### Nếu chỉ thấy khung định vị mà không chấm công
+
+Nhìn vùng trạng thái/hướng dẫn phía dưới ảnh camera. “Chưa ghép quyền chấm công” nghĩa là trình duyệt chưa có cookie kiosk hợp lệ; khung định vị vẫn có thể chạy local nhưng không ghi công. Bấm “⚙ Tùy chọn” ở đầu vùng chấm công, chọn “Ghép thiết bị” để nhập mã 8 số. Liên kết “Lấy mã ghép 8 số trong Quản trị → Thiết bị Kiosk” mở đúng trang cấu hình; bấm “Tạo lại mã ghép” của kiosk cần dùng (hoặc tạo thiết bị mới nếu thật sự là điểm mới). Mã chỉ hiện khi được cấp, có hạn và dùng một lần; sau khi ghép xong không có mã cố định để xem lại. Không cần cấp lại mã khi thiết bị vẫn đang hoạt động bình thường.
+
+Nếu ghi công bị tạm dừng hoặc bộ nhận diện chưa sẵn sàng, màn hình báo riêng. Đăng nhập quản trị và ghép kiosk là hai quyền khác nhau; chỉ đăng nhập chưa tự cấp quyền ghi công cho trình duyệt. Dòng hướng dẫn chất lượng/nhận diện chỉ nằm ở phần trạng thái phía dưới ảnh, không đè lên video. Thanh cảnh báo phía trên ảnh đã bỏ theo yêu cầu. Khi camera đang chờ quyền mở, nút “Hủy mở camera” có thể hủy lần mở đó.
+
+### Xóa nhân viên và quét lại cùng ca
+
+Nhân viên → Xóa → xác nhận Xóa nhân viên: hồ sơ ngừng nhận diện và được đưa vào bộ lọc Đã xóa — tra cứu lịch sử. Lượt công, lịch ca và thông tin đối chiếu vẫn còn để tra cứu/xuất báo cáo; mã nhân viên không cấp lại cho người khác. Đây là xóa mềm; xóa dữ liệu sinh trắc học dùng chức năng riêng.
+
+Mỗi nhân viên chỉ ghi một lượt Vào và một lượt Ra cho từng ca đã phân. Camera quét lại cùng chiều chỉ hiện Đã quét vào ca/Đã quét ra ca, giữ nguyên giờ lần đầu và không phát âm báo. Ca qua đêm dùng ngày bắt đầu ca. Nếu chưa phân ca, mỗi chiều ghi một lần trong ngày theo múi giờ nghiệp vụ; cần phân lịch để dùng nhiều ca/ngày. Khoảng nhận ca giao thoa cần sửa ở Ca/Lịch trước khi chấm công, hệ thống không tự đoán ca. Chiều kiosk vẫn do cấu hình Vào/Ra quyết định.
+
+
+## Chấm công đối tác
+
+Hướng dẫn thao tác và vòng đời riêng: [docs/CHAM_CONG_DOI_TAC.md](docs/CHAM_CONG_DOI_TAC.md). Kiosk đối tác ở `#partner`; cấu hình, tiếp nhận và đối soát trong Quản trị → Chấm công đối tác. Không tạo người thời vụ trong Nhân viên công ty. Kho mặt tạm không thuộc backup; bản chốt/điều chỉnh vẫn thuộc SQL. Bộ cài mới có model giọng nói local; nếu thiếu model, nhập tay vẫn dùng được. Sau khôi phục cần ghép/gán lại thiết bị và kích hoạt chính sách có kiểm soát.

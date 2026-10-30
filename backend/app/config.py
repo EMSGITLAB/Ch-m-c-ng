@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 2_000_000
     opencv_threads: int = Field(default=4, ge=1, le=32)
     capture_max_edge: int = Field(default=1280, ge=640, le=1600)
+    speech_threads: int = Field(default=2, ge=1, le=4)
+    speech_timeout_seconds: int = Field(default=30, ge=10, le=60)
+    speech_prewarm_enabled: bool = True
     allowed_hosts: list[str] = ["localhost", "127.0.0.1", "testserver"]
     allowed_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8000", "http://127.0.0.1:8000", "http://testserver"]
     session_hours: int = Field(default=8, ge=1, le=24)

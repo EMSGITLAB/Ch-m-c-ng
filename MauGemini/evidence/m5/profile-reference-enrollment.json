@@ -1,0 +1,44 @@
+{
+  "applied": true,
+  "portraits_reviewed": 370,
+  "quality_counts": {
+    "accepted": 367,
+    "multiple_faces": 3
+  },
+  "existing_members_preserved": 1,
+  "ambiguous_profiles_excluded": 0,
+  "profiles_to_enable": 367,
+  "reference_minimum_pixels": 64,
+  "live_minimum_pixels": 96,
+  "image_upscaled_to_pass": false,
+  "model_changed": false,
+  "identity_threshold_changed": false,
+  "group_accuracy_validated": false,
+  "pad_validated": false,
+  "controls": {
+    "independent_control_images": 11,
+    "control_people": 1,
+    "people_without_independent_controls": 367,
+    "reused_controls_excluded": 0,
+    "group_accuracy_validated": false,
+    "pad_validated": false
+  },
+  "publication": {
+    "policy_id": "trial-pilot-50428b5aa2d546feb03edc3a18f1282a",
+    "enabled": true,
+    "participants": 368,
+    "threshold": 0.5059425532817841,
+    "minimum_margin": 0.0,
+    "threshold_changed": false,
+    "metrics": {
+      "independent_control_images": 11,
+      "control_people": 1,
+      "people_without_independent_controls": 367,
+      "reused_controls_excluded": 0,
+      "group_accuracy_validated": false,
+      "pad_validated": false
+    },
+    "restart_required": false,
+    "message": "\u1ea2nh h\u1ed3 s\u01a1 \u0111\u00e3 \u0111\u01b0\u1ee3c d\u00f9ng l\u00e0m m\u1eabu nh\u1eadn di\u1ec7n; kh\u00f4ng c\u1ea7n thu th\u00eam b\u1ed9 m\u1eabu."
+  }
+}

@@ -3,6 +3,22 @@ import assert from 'node:assert/strict';
 import { KioskFlow, KioskError } from '../src/kioskFlow.ts';
 
 const receipt={status:'recorded',request_id:'id-1',event_id:'event-1',employee_code:'000123',employee_name:'Hồ sơ thử',server_time:'2026-10-28T01:00:00Z',direction:'in'};
+
+for (const [direction,text] of [['in','Đã quét vào ca'],['out','Đã quét ra ca']]) {
+  test(`rescan ${direction} keeps the original receipt and shows direction-specific text`,async()=>{
+    const duplicate={...receipt,status:'duplicate',direction};
+    const env=fixture(()=>({request_id:'id-1',state:'used',receipt:duplicate}),'id-1');
+    const flow=new KioskFlow(env.ports);
+    await flow.step();
+    assert.equal(flow.state.phase,'success');
+    assert.match(flow.state.feedback,new RegExp(text));
+    assert.deepEqual(flow.state.receipt,duplicate);
+    assert.ok(env.calls.every(call=>!call.path.endsWith('/commit')));
+    env.advance(5000);
+    await flow.step();
+    assert.ok(env.calls.every(call=>call.options.method!=='POST'||call.path.endsWith('/preview')));
+  });
+}
 function fixture(handler,initial=null){
   let saved=initial,now=0,enabled=true,number=0,photos=0;const calls=[],states=[];
   const ports={request:async(path,options={})=>{calls.push({path,options});return handler(path,options);},photo:async()=>{photos++;return new Blob([`frame-${photos}`]);},enabled:()=>enabled,load:()=>saved,save:id=>{saved=id;},uuid:()=>`id-${++number}`,now:()=>now,update:state=>states.push(state)};

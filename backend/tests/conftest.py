@@ -46,6 +46,9 @@ def client(monkeypatch, tmp_path):
     settings=get_settings()
     monkeypatch.setattr(settings, "runtime_dir", tmp_path / "runtime")
     monkeypatch.setattr(settings, "backup_directory", None)
+    # Speech lifecycle/ready-handshake tests use isolated workers below. API
+    # fixtures must not preload the laptop's real model for every test case.
+    monkeypatch.setattr(settings, "speech_prewarm_enabled", False)
     # Isolated test databases must never inherit the real laptop trial selector.
     monkeypatch.setattr(settings, "functional_trial_enabled", False)
     monkeypatch.setattr(settings, "functional_trial_policy_id", None)

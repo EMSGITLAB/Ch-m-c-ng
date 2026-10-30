@@ -1,0 +1,18 @@
+{
+  "postgresql": "17.11",
+  "schema_tables": [
+    "alembic_version",
+    "audit_logs",
+    "devices",
+    "attendance_events",
+    "employees",
+    "face_templates",
+    "shift_assignments",
+    "shifts"
+  ],
+  "upgrade": "passed",
+  "downgrade_and_upgrade": "passed",
+  "pg_dump_restore_unicode": "passed",
+  "isolated_databases": true,
+  "live_database_test_data": false
+}

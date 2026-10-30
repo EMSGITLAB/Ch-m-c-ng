@@ -11,6 +11,8 @@ type Status = {
   recovery_key_preserved: boolean;
 };
 const labels: Record<string,string> = {
+  partner_biometric_cleanup_failed: 'Chưa dọn được kho mẫu mặt đối tác hết hạn. Kiểm tra ổ đĩa/quyền truy cập; không tự khởi tạo lại kho đang có dữ liệu.',
+  backup_destination_unavailable: 'Thư mục/ổ backup đã cấu hình hiện chưa truy cập được. Kết nối lại ổ đĩa; bản backup local chưa thay thế bản lưu trên ổ riêng.',
   disk_low: 'Ổ đĩa còn dưới 2 GB. Giải phóng dung lượng trước khi tiếp tục lưu dữ liệu.',
   database_unavailable: 'Chưa kết nối được SQL Server.', recognition_unavailable: 'Model nhận diện chưa sẵn sàng.',
   attendance_disabled: 'Ghi công đang tắt hoặc cấu hình chưa sẵn sàng.', supervisor_stopped: 'Backend chưa chạy bằng bộ giám sát tự phục hồi.',

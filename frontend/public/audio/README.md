@@ -1,6 +1,15 @@
 # Giọng báo chấm công
 
-## Bản đang dùng — đọc dứt khoát
+## Bản đang dùng — file người dùng, nhanh hơn 35%
+
+`hop-le-user-fast-135.wav`: chuyển từ `HopLe.mp3` người dùng cung cấp ngày 29/10/2026, WAV PCM 16-bit mono 44.100 Hz. Tăng tốc **1,35 lần**, giữ cao độ giọng; thời lượng **1,056 → 0,7754 giây**. Dùng cho cả chấm công và nút Thử giọng đọc. URL mới tránh cache âm cũ; không áp thêm playbackRate để tránh tăng tốc hai lần.
+
+- Xử lý bằng FFmpeg local: `atempo=1.35,alimiter=limit=0.97:level=false:latency=true`, xuất `-ar 44100 -ac 1 -c:a pcm_s16le`. Không dùng API giọng đọc.
+- SHA256 nguồn MP3: `a74519c59746dba112ed25da700a0e255b35b1bd267d9f6eb1c88985c1f51432`.
+- SHA256 WAV đang dùng: `481cf20f0331a0834d39aa108082b539c5b343d6914ddf649c4422a64e480e7e`.
+- Peak −7,36 dBFS, RMS −20,27 dBFS, 0 mẫu clipping. Bằng chứng tại `evidence/m5/kiosk-user-audio-check.json`; nghe loa vật lý tùy âm lượng thiết bị.
+
+## Bản tổng hợp cũ — đọc dứt khoát
 
 `hop-le-dut-khoat.wav`: **“Hợp lệ.”**, WAV PCM 16-bit mono 44.100 Hz, dài **0,7763 giây**. Tên tệp mới giúp trình duyệt nạp bản mới khi thay âm báo. Bộ phát trong ứng dụng đặt âm lượng phần tử audio ở 100%; âm lượng loa vật lý do thiết bị điều khiển.
 
@@ -24,4 +33,4 @@
 - SHA256 asset MSI dùng tạo: `5368d9dab4e1371f35b2cdc4f4053e28060d450c3328038a783bdb9d2476e3bf`.
 - Tái tạo bằng `scripts/generate_kiosk_audio.py --executable <espeak-ng.exe> --data-root <thư mục chứa espeak-ng-data>`. Công cụ chỉ dùng khi phát triển, không cần lúc vận hành.
 
-Chỉ phát tự động sau biên nhận `recorded` hợp lệ. `duplicate`, lỗi, chờ đối chiếu và thử camera không phát “Hợp lệ”. Nhớ event ID gần nhất theo thiết bị trong phiên trình duyệt để không đọc lại khi phục hồi cùng biên nhận. Nút **Thử giọng đọc** trong **Tùy chọn thiết bị** phát riêng để kiểm tra loa, không tạo lượt công. Đây là giọng tổng hợp; cần nghe thử trên iPad/Android thật cùng kiểm tra âm lượng/quyền phát media.
+Chỉ phát tự động sau biên nhận `recorded` hợp lệ. `duplicate`, lỗi, chờ đối chiếu và thử camera không phát “Hợp lệ”. Nhớ event ID gần nhất theo thiết bị trong phiên trình duyệt để không đọc lại khi phục hồi cùng biên nhận. Nút **Thử giọng đọc** trong **⚙ Tùy chọn** phát riêng để kiểm tra loa, không tạo lượt công. Cần nghe thử trên iPad/Android thật cùng kiểm tra âm lượng/quyền phát media.

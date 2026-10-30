@@ -1,0 +1,19 @@
+{
+  "read_only": true,
+  "active_people_unchanged": 1,
+  "prospective_reference_people": 16,
+  "existing_controls_passed": true,
+  "controls": {
+    "independent_control_images": 11,
+    "control_people": 1,
+    "people_without_independent_controls": 15,
+    "reused_controls_excluded": 0,
+    "group_accuracy_validated": false,
+    "pad_validated": false
+  },
+  "threshold_changed": false,
+  "model_changed": false,
+  "policy_published": false,
+  "images_vectors_or_identities_exported": false,
+  "group_accuracy_or_pad_validation": false
+}

@@ -1,4 +1,4 @@
-# Chấm công local
+# OnTime — Chấm công khuôn mặt
 
 Webapp nhận diện khuôn mặt và chấm công nội bộ. Toàn bộ ảnh và vector xử lý trên máy chủ, không Docker.
 

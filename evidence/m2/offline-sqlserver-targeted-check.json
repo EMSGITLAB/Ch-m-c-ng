@@ -1,0 +1,12 @@
+{
+  "provider": "SQL Server 2025",
+  "migration": "head",
+  "isolated_database": true,
+  "test_files": [
+    "backend/tests/test_partner_speech.py"
+  ],
+  "result": "passed",
+  "offline_network_guard": true,
+  "live_database_modified": false,
+  "accuracy_or_pad_validation": false
+}

@@ -1179,3 +1179,110 @@ Ca mẫu người dùng đồng ý đã được gắn cho 2 ngày có lượt t
 Bộ phát hành v7 được tạo lại với mã hồ sơ/worker/model local mới: 166 tệp manifest, cài wheel offline trong venv mới và chạy model/web/audio trong database smoke cô lập đều đạt; đủ helper backup/import/ca thử. Không mở database thật trong kiểm tra gói và không đóng gói ảnh/vector/tài khoản/khóa. Bộ v6 giữ nguyên để đối chiếu. T34, các kiểm thử thiết bị thật và thử nhóm vẫn giữ trạng thái theo bằng chứng riêng; bản sửa giao diện/bám mặt không tự đánh dấu các mốc đó là đạt.
 
 ZIP v7 hoàn tất: 133,751,479 byte/167 thành viên, kiểm tra CRC/SHA đầy đủ; chỉ gồm manifest, không có tệp runtime riêng. Bằng chứng: evidence/m5/native-release-check.json và release-archive-check.json.
+
+
+### Áp dụng UI/UX mẫu Gemini — 29/10/2026 (đang thực hiện)
+
+Yêu cầu: khớp giao diện mẫu trong MauGemini, xem và kiểm tra trong Codex browser. Dùng bố cục/CSS/markup mẫu làm chuẩn; nối dữ liệu và thao tác vào backend local hiện có. Mẫu chứa mock API, đăng nhập giả và mô phỏng điểm danh; các phần này chỉ dùng xem thiết kế, không đưa vào luồng nhận diện/ghi công thực.
+
+- [x] UI01: Mở mẫu trong Codex browser, đối chiếu màn hình và các khác biệt hợp đồng API.
+- [x] UI02: Áp dụng khung ứng dụng/kiosk, bố cục quản trị/tổng quan, nhân sự, thiết bị và kiểu hiển thị các phân hệ.
+- [x] UI03: Kiểm tra các thao tác với backend thật trong database thử cô lập; giữ tải/chụp ảnh, ghép kiosk, chấm công tự động, âm báo theo biên nhận.
+- [x] UI04: Build/kiểm thử, rà soát tương thích và đối chiếu giao diện với mẫu trong Codex browser, cập nhật bản đang chạy.
+
+Đã lưu snapshot mã frontend trước thay đổi tại .runtime/ui-gemini-before/frontend-source.zip. Không sửa model/ngưỡng nhận diện theo thay đổi giao diện.
+
+
+UI Gemini: đã dùng nguyên 12 tệp CSS và palette SVG của mẫu, bố cục header/kiosk, Tổng quan, Nhân sự, Thiết bị và hộp thoại. Giữ controller nhận diện/âm báo/ảnh một tấm; backend thêm số liệu Tổng quan thật và đổi chiều kiosk có kiểm tra quyền, khóa dữ liệu, hủy phiên dở, giữ biên nhận đã lưu. Không mang mock API/đăng nhập giả/mô phỏng biên nhận vào ứng dụng thật. Phần video được căn giữ toàn cảnh và bám khung theo vùng hiển thị ảnh thực, tránh crop ở tỷ lệ tablet. Thêm một lớp CSS thích ứng nhỏ riêng cho header 641–900 px vì bản mẫu tràn ngang ở 768 px; 12 CSS gốc giữ nguyên.
+
+309 backend passed (6 native-only đã nằm trong suite SQL Server riêng); 208 SQL Server offline passed, 0 lần thử mạng ngoài; 32 Node passed, build/Ruff đạt. Codex browser đã kiểm tra đăng nhập thật bằng tài khoản thử, thêm/sửa nhân viên, tải ảnh nhóm báo nhiều mặt và vẫn hiển thị ảnh hồ sơ, thêm/chọn đơn vị, ghép kiosk và đổi Vào/Ra. Ca/lịch, bảng công, AI, vận hành mở được trên backend thử. Các ca này không phải kiểm định camera/tablet thật hoặc độ chính xác/PAD.
+
+
+UI04 hoàn tất: đã khởi động lại đúng supervisor và khôi phục preview 5173; cả 8000/5173 trả ready, nhận diện hoạt động với 368 hồ sơ. Dashboard cần phiên quản trị và đổi chiều cần quyền kiosk; các dấu mock API/biên nhận mô phỏng không có trong bundle. Trước/sau triển khai: 374 nhân viên, 368 template, 370 ảnh hồ sơ, 24 lượt công, số lượng giữ nguyên; bản ghi thử giao diện nằm trong DB cô lập. Số đo bố cục tại cùng viewport xác nhận header, tiêu đề quản trị, thanh điều hướng, lưới KPI và thao tác nhanh cùng kích thước/vị trí, palette/font/bo góc giống mẫu; chiều cao bảng thay theo số dòng thật. Tablet 768 px có document width 753, mobile 390 px có document width 386, không tràn ngang. Bằng chứng: evidence/m5/gemini-ui-check.json, gemini-runtime-check.json, gemini-core-preserved.json và ảnh gemini-*.png.
+
+Ổ USB E: không kết nối trong lần cập nhật này, nên tạo backup mã hóa tại .runtime/backups trước restart: 122.005.796 byte/190 tệp, xác thực/checksum đạt, không gọi đây là backup ngoài ổ vật lý. Giữ cấu hình đích E: để tiếp tục lưu khi thiết bị được kết nối. Không ghi đè bản sao lưu cũ. Bản v8 có 167 tệp manifest, đã cài offline trong venv mới và chạy model/frontend/audio với DB smoke riêng; không đóng gói thông tin riêng hoặc mở DB thật khi kiểm tra gói.
+
+ZIP v8 đã kiểm tra toàn bộ SHA/CRC: 133,760,240 byte/168 thành viên; chỉ tệp manifest, không có dữ liệu riêng. Tab ứng dụng thật được giữ trong Codex browser tại http://localhost:5173/#admin; tab mẫu và tab kiểm thử đã đóng.
+
+
+### Khắc phục kiosk chỉ định vị sau đổi UI — 29/10/2026
+
+- [x] Xác định máy chủ vẫn bật cấu hình 368 người; trình duyệt mất cookie ghép kiosk. Không có phiên nhận diện mới trong thời gian mất ghép, dù bộ định vị local vẫn vẽ khung.
+- [x] Người dùng đăng nhập lại; đã ghép lại đúng kiosk cũ qua API/mã một lần, không thay model hoặc ngưỡng. Người dùng xác nhận đã hiển thị đúng tên trở lại.
+- [x] Thay trạng thái gây hiểu nhầm khi chưa ghép bằng “Chưa ghép quyền chấm công”, tách rõ định vị và ghi công.
+- [x] Bỏ thanh cảnh báo/hướng dẫn phía trên camera theo yêu cầu cuối; chỉ giữ hướng dẫn ở vùng trạng thái dưới video.
+- [x] Nút “Tùy chọn” luôn hiện; nhóm nút Bật/Tắt camera, đổi camera, Ghép thiết bị và thử giọng đọc ẩn mặc định. Hộp ghép mở ô nhập mã 8 số cả khi đang ghép; link lấy mã tới #admin/devices; chỉ đóng hộp sau ghép thành công.
+- [x] Hoàn tất kiểm tra bố cục/trạng thái trên Codex browser và build bản cập nhật; đóng gói bản sửa cùng bộ phát hành mới.
+
+35 kiểm thử Node và build đạt, gồm các trạng thái chưa ghép, offline, chưa sẵn sàng, tạm dừng, khôi phục quyền. Bộ nhận diện, scoring/ngưỡng, chuỗi 3 khung, commit/idempotence giữ nguyên. Trạng thái mới không tự cấp quyền, không bỏ kiểm tra kiosk và không tạo biên nhận giả.
+
+
+Điều chỉnh tiếp theo phản hồi: bỏ toàn bộ thanh cảnh báo/hướng dẫn phía trên camera, giữ hướng dẫn ở vùng trạng thái phía dưới. Thay nút ghép thường trực bằng nút “⚙ Tùy chọn” luôn hiện; bấm mở/đóng nhóm điều khiển Bật/Tắt/Hủy mở camera, đổi camera, ghép thiết bị và thử âm thanh. Các nút điều khiển ẩn mặc định; không đặt nút đổi camera hoặc hướng dẫn đè lên video. Hộp ghép vẫn có ô 8 số và đường dẫn lấy mã tới đúng trang Thiết bị Kiosk. 309 backend passed, 6 native-only đã có suite SQL Server 208 passed trước đó (backend không đổi trong bản sửa này); 35 Node passed và build đạt.
+
+
+Kiểm chứng trực tiếp trong Codex browser: “Tùy chọn” mở được đủ 4 nút; Tắt camera cho video paused=true/readyState=0, bật lại thấy nút Tắt camera và trạng thái quét. Nhóm điều khiển nằm hoàn toàn phía trên vùng video (controlsOutsideVideo=true), không còn phần tử hướng dẫn/cảnh báo đè lên ảnh (0 overlay); đóng Tùy chọn ẩn lại toàn bộ nhóm nút. Ảnh evidence/m5/kiosk-options-controls.png chỉ chụp thanh nút, không có ảnh nhân viên. Hộp ghép có ô 8 số khi đã ghép và link #admin/devices mở đúng màn Thiết bị Kiosk. Không khởi động lại backend/đổi cấu hình để tránh gián đoạn phiên hiện tại; app 5173 cập nhật qua HMR, 8000 phục vụ bundle mới.
+
+Bản cập nhật giao diện cuối đã build thành công (index-DFCzAGKr.js), được 8000 phục vụ; health/ready=true. Đã đóng gói local-functional-20261029-v10: 167 tệp manifest, cài offline vào venv mới, model/frontend/audio và chặn đường dẫn riêng đạt với DB smoke cô lập, không mở/sửa DB thật. ZIP 133.761.722 byte/168 thành viên, toàn bộ checksum đạt; SHA256 b79a5b41fde7477f42665b12e87c01f13e2ede7464e32f2c03893cea5b9b5270. Bằng chứng native-release-check.json, release-archive-check.json và kiosk-permission-repair.json. Tài liệu vận hành đã cập nhật vị trí Tùy chọn và hướng dẫn dưới ảnh.
+
+### Thay âm báo bằng file người dùng — 29/10/2026
+
+- [x] Đọc HopLe.mp3 người dùng cung cấp (8.448 byte), xử lý hoàn toàn local bằng FFmpeg, tăng tốc 1,15 lần và giữ cao độ giọng gốc.
+- [x] Tạo frontend/public/audio/hop-le-user-fast-115.wav; đổi URL audio để không dùng nhầm âm cũ từ cache; áp dụng cho cả biên nhận chấm công và nút Thử giọng đọc.
+- [x] Build frontend đạt; HTTP 5173/8000 trả đúng checksum, MIME audio và hỗ trợ Range 206. Thời lượng giảm 1,056 → 0,9144 giây, không có mẫu clipping. Giữ logic chỉ phát một lần cho biên nhận thật. Bằng chứng: evidence/m5/kiosk-user-audio-check.json.
+- [x] Hoàn tất kiểm thử: backend 309 passed/6 native-only skipped, frontend 35 passed, build đạt. Cập nhật tài liệu nguồn âm thanh và checksum; chưa gán xác nhận nghe trên loa/tablet thật.
+
+### Xóa nhân viên, chống quét trùng theo ca và tăng tốc âm báo — 29/10/2026
+
+- [x] Thêm DELETE có quyền quản trị/CSRF, hộp xác nhận, xóa mềm và bộ lọc Đã xóa; giữ nguyên nhân viên gốc để báo cáo/lịch sử không mất liên kết. Ngừng nhận diện và vô hiệu phiên nhận diện đang dở bằng revision; không tái sử dụng mã nhân viên đã xóa. Chưa xóa nhân viên thật nào để thử.
+- [x] Chặn thêm lượt cùng nhân viên, cùng chiều trong cùng ca theo cửa sổ nhận ca của báo cáo, kể cả qua đêm. Hồ sơ chưa phân ca dùng ngày theo múi giờ nghiệp vụ. Không tự đổi Vào thành Ra. Khoảng nhận ca chồng nhau báo cần điều chỉnh, không tự chọn ca tùy ý. Giữ khóa calendar/employee để hai kiosk đồng thời không tạo trùng.
+- [x] Quét lại chỉ hiện Đã quét vào ca/Đã quét ra ca, giữ giờ lần đầu, không thêm mục Vừa ghi nhận và không đọc âm báo; vẫn giữ biên nhận/audit nội bộ cho việc thử lại an toàn, không thêm/sửa bản ghi công.
+- [x] Tăng tốc file HopLe.mp3 lên 1,35 lần theo phản hồi mới; WAV 0,7754 giây, giữ cao độ, 0 mẫu clipping, đổi URL để tránh cache bản chậm.
+- [x] Hoàn tất kiểm thử toàn bộ, nâng cấp schema và cập nhật máy chủ đang chạy; kiểm chứng UI trong Codex browser.
+
+Kết quả cuối: backend 317 passed/6 native-only skipped; SQL Server cô lập 216 passed, 0 lần thử mạng ngoài; Node 37 passed, build/Ruff đạt. Migration 20261029_employee_soft_delete đã áp dụng sau backup SQL/checksum; supervisor được khởi động lại, ready=true. Trước/sau cập nhật đều 374 nhân viên, 368 template, 370 ảnh, 31 lượt công; không xóa người thật hoặc thêm lượt thử trong DB thật. Codex browser đã thấy nút Xóa, mở hộp xác nhận có thông báo giữ lịch sử rồi Hủy, chọn bộ lọc Đã xóa cho 0 hồ sơ và trả về danh sách. Bằng chứng: evidence/m5/employee-delete-shift-rescan-check.json, kiosk-user-audio-check.json, employee-delete-actions.png; log đầy đủ ở .runtime/shift-rescan-*.log. Chưa gán kết quả nghe loa/nhận diện người thật mới cho phiên này.
+
+### Thương hiệu OnTime — 30/10/2026
+
+- [x] Người dùng duyệt tên OnTime và logo phương án 02 (khung quét xanh + dấu xác nhận).
+- [x] Dựng SVG nền sáng/tối, logo ngang, favicon và icon tablet 180/192/512; manifest dùng tài nguyên local, không thêm service worker hoặc API ngoài.
+- [x] Đổi tên trên header/footer, tiêu đề tab, tên ứng dụng và tài liệu sang OnTime. Giữ nguyên màu giao diện đã duyệt, database/cookie/cấu hình/model/ngưỡng.
+- [x] Hoàn tất build/kiểm thử, kiểm chứng trong Codex browser và cập nhật bản đang chạy.
+
+OnTime hoàn tất: frontend build và Ruff đạt; backend 317 passed/6 native-only skipped. Codex browser xác nhận logo SVG 44×44 tải được, tên/header/footer/tab đúng trên kiosk và trang đăng nhập; viewport 768/390 không tràn ngang, đã trả viewport về mặc định. HTTP 5173/8000 phục vụ đủ 10 tệp thương hiệu đúng checksum và manifest; tiêu đề API OnTime đã cập nhật sau restart supervisor, ready=true. Không đổi database, model/ngưỡng hoặc luồng chấm công. Bằng chứng evidence/m5/ontime-brand-check.json, ontime-header.png; bộ SVG/PNG tại frontend/public/brand, tài liệu docs/branding/ONTIME.md.
+
+### Đề xuất mới: Chấm công đối tác — 30/10/2026
+
+Đã nghiên cứu luồng lao động thời vụ thay đổi theo ngày/ca và đối chiếu schema/nhận diện hiện có. Tài liệu đề xuất: PHUONG_AN_CHAM_CONG_DOI_TAC.md. Hướng: không tạo hồ sơ nhân viên công ty, lấy mẫu tạm khi tiếp nhận/Vào, mã lao động theo đối tác/ca, đối chiếu Ra, chống ghi trùng, giữ bảng công và xóa mẫu theo hạn; tiếp nhận người mới cần quyền hợp lệ. Đang chờ người dùng duyệt mức định danh, cách tiếp nhận, số lượt ra/vào trong ca và thời hạn giữ mẫu. Chỉ tạo tài liệu; chưa thay đổi database/API/giao diện hoặc bật phân hệ mới.
+
+Chấm công đối tác — cập nhật yêu cầu đã chốt: đối soát từng lao động bằng mã tạm OnTime cấp, không phụ thuộc mã của đối tác. Chống cấp trùng bằng ràng buộc duy nhất/cấp số có khóa và đối chiếu lại mặt trong ca (kể cả người đã Ra); thử lại hoặc hai kiosk không sinh thêm mã. Người dùng xác nhận giữ riêng chiều Vào/Ra: quét lại Vào chỉ hiện đã vào, chiều Ra mới ghi Ra; đã hoàn tất ca không cấp mã mới trong ca đó. Đã cập nhật PHUONG_AN_CHAM_CONG_DOI_TAC.md và tiêu chí nghiệm thu. Vẫn là tài liệu chờ duyệt cách tiếp nhận mới/thời hạn mẫu, chưa thay đổi chức năng đang chạy.
+
+Chấm công đối tác — bổ sung họ tên tại lúc tiếp nhận: theo yêu cầu người dùng, mã tạm được giữ trong phiên mới rồi yêu cầu đọc họ tên qua micro, chuyển chữ trên máy chủ local; có nhập/sửa tay ngay khi cần. Xác nhận tên trước khi ghi Vào/phát Hợp lệ. Đã có mã hoặc đang quét Ra thì không hỏi lại tên. Mọi cách nhập giữ cùng mã; ràng buộc tên–mặt–phiên, chống phản hồi giọng nói muộn/đổi người và dọn âm thanh tạm. Tài liệu đã bổ sung phương án faster-whisper local, tương thích trình duyệt/quyền micro/HTTPS và tiêu chí nhập tay/offline. Chỉ cập nhật PHUONG_AN_CHAM_CONG_DOI_TAC.md; chưa cài model, chưa xin quyền micro hoặc thay đổi chức năng chạy.
+
+Goal mới Chấm công đối tác đã tạo thành công sau khi người dùng xóa Goal cũ. Bắt đầu P0/P1 theo PHUONG_AN_CHAM_CONG_DOI_TAC.md; chọn bản đầu tiếp nhận có kiểm soát và TTL mặt 48 giờ theo đề xuất được yêu cầu triển khai. Đã viết dữ liệu/API/UI cấu hình đối tác/đợt/thiết bị và 13 kiểm thử tập trung đạt; hồi quy/native SQL đang chạy, chưa bật tiếp nhận mặt/ghi công đối tác trong bản đang chạy.
+
+Chấm công đối tác P1 hoàn tất và đã cập nhật bản chạy: API/UI cấu hình, migration SQL Server, D23 theo tên người dùng cung cấp. 330 backend passed, SQL cô lập 229 passed/0 egress, build/Ruff đạt; 6 kiểm thử kho mặt tạm P2 đạt. Tiếp tục P2–P5 theo checklist riêng; camera/nhận họ tên/ghi Vào-Ra đối tác chưa được bật.
+
+
+Chấm công đối tác P2/P3 đã triển khai và cập nhật bản chạy (migration 20261030_partner_admission, đã backup SQL/checksum). Camera tự quét, mã tạm duy nhất, tên qua micro local/nhập tay, duyệt tiếp nhận, Vào/Ra và quét trùng im lặng; kho mặt tạm ngoài backup, dọn hết hạn theo chu kỳ. Backend hồi quy 355 passed/8 skipped; SQL Server 250 passed/0 nonlocal attempts; frontend 45 passed, build/Ruff đạt; nhóm kiểm tra bổ sung 27 passed/2 skipped và ca đêm/vòng đời 9 passed. Bằng chứng evidence/m5/partner-p2-check.json. Dữ liệu thật vẫn 374 hồ sơ nhân viên; chỉ tạo đối tác D23, chưa tạo ca/lao động/lượt công đối tác giả. Chưa nghiệm thu người thật/micro/độ chính xác/PAD. Goal active, tiếp tục P4/P5 theo PHUONG_AN_CHAM_CONG_DOI_TAC.md.
+
+
+Chấm công đối tác P4 đã triển khai/kiểm thử/cập nhật bản chạy tới migration 20261030_partner_reports, sau backup/checksum. Đối soát, giờ nghỉ, điều chỉnh có lý do/lịch sử, chốt checksum, CSV và khôi phục không hồi sinh kho mặt tạm đã kiểm tra. Hồi quy 370 passed/10 skipped; SQL 273 passed/0 egress, SQL mới nhất 30 passed; frontend 48 passed, build/Ruff đạt. Bằng chứng evidence/m5/partner-p4-check.json; hướng dẫn docs/CHAM_CONG_DOI_TAC.md. P5 đã chuẩn bị đợt/điểm D23 thử một người (không dùng thanh toán), chưa có lao động/lượt công đối tác hoặc ghép đổi trình duyệt. Chờ người dùng sẵn sàng thử camera/micro; bộ cài offline đang xác minh phiên bản cuối. Goal active, chưa coi người thật/PAD/độ chính xác là đạt.
+
+
+Đã điều chỉnh Chấm công đối tác theo yêu cầu UI: bắt mặt rồi mở popup đọc/nhập tên riêng, giữ cùng mã khi nhập/reload, không quét nhận người khác ở phía sau; xác nhận mặt lại bằng proof gắn worker_id. TTL nhập tên 5 phút. Backend 377 passed/10 skipped, SQL 17 passed/0 egress; frontend 56 passed/build đạt. Bản chạy đã cập nhật. P5 còn thử người thật: camera đang lỗi nguồn video, đã yêu cầu người dùng thử khi chỉ còn một tab/nguồn camera. Không đánh dấu luồng thật/PAD/độ chính xác là đạt.
+
+Bộ cài đối tác v3 (217 tệp) chứa popup mới đã xác minh checksum, cài offline vào venv mới và chạy web/audio/model/giọng nói local tại đường dẫn chuyển chỗ, chặn mạng ngoài, không mở/sửa database thật hoặc kèm dữ liệu riêng. Bằng chứng evidence/m5/native-release-check.json và partner-name-dialog-check.json. Đã chạy lại frontend cuối 56/56 đạt; P5 vẫn chưa đánh dấu hoàn tất do còn phiên thử người thật/camera/micro/Vào/Ra.
+
+30/10/2026 12:50 — kiểm tra chỉ đọc health 200, đợt đối tác mở 1, pending 2, sự kiện Vào/Ra đối tác 0. P5 chưa đủ bằng chứng người thật; cùng điểm chờ camera/micro đã lặp ba lượt Goal, không còn công việc phần mềm độc lập để thay thế phép thử. Goal chuyển blocked, giữ nguyên phạm vi và checklist chưa xong; chờ người dùng báo camera đã mở và thao tác popup họ tên để tiếp tục kiểm tra Vào/Ra/âm báo. Chi tiết tại PHUONG_AN_CHAM_CONG_DOI_TAC.md, mục Điểm chờ P5.
+
+Phản hồi tiếp theo: người dùng đã thấy camera và popup tên; phiên nhập/xác nhận đã hết hạn. Đã chuẩn bị sẵn màn hình duyệt D23 và hướng dẫn quét lại để tiếp tục trong phiên mới; không sửa hạn phiên cũ hay tự ghi công. P5 vẫn chưa đánh dấu đạt.
+
+P5 tiếp tục sau phản hồi người dùng: phiên mới đã xác nhận họ tên, được Codex duyệt qua UI khi còn hạn; SQL chỉ đọc xác nhận đã lưu duyệt, chưa có sự kiện công tại thời điểm kiểm tra. Chờ khuôn mặt hiện tại để ghi Vào và xác minh âm báo/quét trùng, sau đó thử Ra. Chưa đánh dấu nghiệm thu luồng thật hoàn tất.
+
+Yêu cầu mới nhất: tự động tiếp nhận đối tác, bỏ duyệt quản trị từng người. Đã đổi API/luồng popup/monitor/báo cáo/hướng dẫn: xác nhận tên + proof đúng mặt mới → tự ghi Vào. Phiên cũ còn hạn tự tiếp tục; phiên hết hạn không hồi sinh. Quyền thiết bị, ca, hạn mức, chống trùng và luồng nhân viên giữ nguyên. Backend 379 passed/10 skipped; SQL nhóm đối tác 56 passed/0 mạng ngoài, SQL sau sửa cuối 19 passed/0 mạng ngoài; nhóm backend cuối 32 passed/4 skipped; frontend 57 passed/build/Ruff đạt. Bản chạy đã restart, browser xác nhận không còn nút duyệt. Bằng chứng evidence/m5/partner-auto-admission-check.json. P5 vẫn chờ kết quả tự Vào/Ra/âm báo bằng người thật; không đánh dấu hoàn tất chỉ bằng kiểm thử tự động.
+
+P5: người dùng đã xác nhận tự ghi Vào; SQL có 1 lượt Vào, 1 người active, tên nguồn voice. Chưa nghe âm báo và phản ánh đọc tên chậm. Đã thêm kết thúc thu sau khoảng lặng, gửi ngay bằng bấm micro, nạp model trong nền, giữ model/2 luồng/beam 3; sửa mở quyền âm báo qua Web Audio và nút bật âm thanh khi bị chặn. Backend 381 passed/10 skipped; speech 8 passed cả SQL cô lập/0 mạng ngoài; frontend 63 passed/build/Ruff đạt. Bản chạy đã restart; bằng chứng evidence/m5/partner-voice-latency-check.json. Chờ nghe thật và Ra/quét trùng Ra; chưa đánh dấu P5 hoàn tất hoặc đo tên thực tế đạt.
+
+Đổi tên mục điều hướng Chấm công (Kiosk) thành Chấm công nội bộ theo yêu cầu người dùng; giữ route #kiosk, quyền, camera và nghiệp vụ. Hướng dẫn vận hành cập nhật tên hiện hành.
+
+Hoàn thành phân hệ đối tác P0–P5 về chức năng và một phiên người thật trên laptop: người dùng xác nhận nghe âm thử, Ra và quét lặp không đọc; SQL đúng một cặp cùng worker, duplicate không tăng sự kiện, Employee giữ 374. Bảng công/CSV đã đối chiếu, các phiên bỏ dở không có công. Bộ cài cuối v6 (217 tệp) đã cài/xác minh offline ở venv mới, có nhãn Chấm công nội bộ; không chứa dữ liệu riêng. Checklist P5 đã cập nhật trong PHUONG_AN_CHAM_CONG_DOI_TAC.md; audit từng tiêu chí tại docs/NGHIEM_THU_CHAM_CONG_DOI_TAC.md, bằng chứng evidence/m5/partner-p5-final-check.json. Không gán đạt PAD/độ chính xác nhóm/tablet/tải/độ trễ tên thực tế; giữ nhóm thử này riêng. Không đánh dấu hoàn tất các hạng mục tồn của dự án nội bộ trước đây chỉ vì Goal đối tác đã xong.

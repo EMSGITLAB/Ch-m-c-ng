@@ -1,0 +1,38 @@
+{
+  "manifest_rows": 373,
+  "unique_employee_codes": 372,
+  "duplicate_rows_merged": 1,
+  "department_conflicts_left_blank": 1,
+  "local_photo_records": 370,
+  "profiles_without_local_photo": 2,
+  "quality_counts": {
+    "face_too_small": 252,
+    "accepted": 115,
+    "multiple_faces": 3
+  },
+  "applied": true,
+  "remote_urls_accessed": false,
+  "operational_policy_changed": false,
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "accuracy_or_pad_validation": false,
+  "profiles_to_add": 352,
+  "import": {
+    "profiles_created": 350,
+    "photos_stored": 351,
+    "samples_stored": 100,
+    "photos_reused": 19,
+    "rejected_photos_stored_for_review": 251,
+    "attendance_enabled": false,
+    "operational_templates_created": 0,
+    "profiles_without_photo_created": 2,
+    "total_profiles_created": 352
+  },
+  "totals": {
+    "employees": 374,
+    "imported_photos": 370,
+    "accepted_imported_photos": 115
+  },
+  "attendance_events_unchanged": true,
+  "operational_templates_unchanged": true,
+  "raw_images_or_vectors_in_evidence": false
+}

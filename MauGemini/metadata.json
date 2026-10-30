@@ -1,0 +1,7 @@
+{
+  "name": "Chấm công local",
+  "description": "Hệ thống chấm công nhận diện khuôn mặt nội bộ và quản trị nhân sự",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

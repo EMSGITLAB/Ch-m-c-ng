@@ -1,0 +1,19 @@
+{
+  "employee_count": 21,
+  "imported_photos": 20,
+  "quality_counts": {
+    "accepted": 15,
+    "face_too_small": 5
+  },
+  "valid_imported_samples": 15,
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "dimensions": 128,
+  "self_file_plumbing_checks": 15,
+  "different_person_pairs": 105,
+  "highest_different_person_cosine": 0.344612,
+  "independent_positive_trials": 0,
+  "accuracy_or_pad_validated": false,
+  "operational_templates": 0,
+  "attendance_events": 0,
+  "identities_images_vectors_exported": false
+}

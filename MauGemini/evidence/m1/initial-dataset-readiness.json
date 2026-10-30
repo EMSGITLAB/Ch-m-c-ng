@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-28T14:56:24.175939+00:00",
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "scope": "initial_reference_dataset_only",
+  "minimum_people": 10,
+  "minimum_reference_images_per_person": 1,
+  "stored_imported_images": 19,
+  "eligible_reference_people": 15,
+  "eligible_reference_images": 15,
+  "invalid_linked_rows": 0,
+  "initial_dataset_ready": true,
+  "imported_cohort_independent_calibration_people": 0,
+  "imported_cohort_independent_evaluation_people": 0,
+  "identity_accuracy_validated": false,
+  "attendance_enabled_by_this_check": false,
+  "live_database_modified": false,
+  "identities_images_vectors_exported": false
+}

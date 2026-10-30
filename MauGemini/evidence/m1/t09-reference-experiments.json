@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-10-28T15:51:19.342019+00:00",
+  "model_id": "yunet2023mar-sface2021dec-48b10fa505ae",
+  "scoring_rule": "mean-top3-available-per-person-v2",
+  "coverage": {
+    "enrolled_people": 16,
+    "enrollment_samples": 25,
+    "known_probe_people": 1,
+    "known_probes": 10,
+    "unknown_probe_people": 0,
+    "unknown_probes": 0,
+    "completed_collections": 17
+  },
+  "status": "insufficient_data",
+  "reference_experiments": [
+    {
+      "reference_cap": 1,
+      "enrolled_people": 16,
+      "reference_images_used": 16,
+      "people_below_reference_cap": 0,
+      "known_probe_people": 1,
+      "known_probe_samples": 10,
+      "known_top1_correct_samples": 10,
+      "known_expected_person_scores": {
+        "minimum": 0.699044,
+        "median": 0.791291,
+        "maximum": 0.88769
+      },
+      "known_top1_margins": {
+        "minimum": 0.430731,
+        "median": 0.525411,
+        "maximum": 0.668416
+      },
+      "unknown_probe_samples": 0,
+      "unknown_top1_scores": null,
+      "gallery_sufficient_for_top2": true,
+      "identity_confirmed": false,
+      "threshold_selected": false,
+      "operational_enabled": false
+    },
+    {
+      "reference_cap": 3,
+      "enrolled_people": 16,
+      "reference_images_used": 18,
+      "people_below_reference_cap": 15,
+      "known_probe_people": 1,
+      "known_probe_samples": 10,
+      "known_top1_correct_samples": 10,
+      "known_expected_person_scores": {
+        "minimum": 0.66146,
+        "median": 0.76794,
+        "maximum": 0.820366
+      },
+      "known_top1_margins": {
+        "minimum": 0.404338,
+        "median": 0.520811,
+        "maximum": 0.586595
+      },
+      "unknown_probe_samples": 0,
+      "unknown_top1_scores": null,
+      "gallery_sufficient_for_top2": true,
+      "identity_confirmed": false,
+      "threshold_selected": false,
+      "operational_enabled": false
+    },
+    {
+      "reference_cap": 5,
+      "enrolled_people": 16,
+      "reference_images_used": 20,
+      "people_below_reference_cap": 15,
+      "known_probe_people": 1,
+      "known_probe_samples": 10,
+      "known_top1_correct_samples": 10,
+      "known_expected_person_scores": {
+        "minimum": 0.727449,
+        "median": 0.813167,
+        "maximum": 0.919052
+      },
+      "known_top1_margins": {
+        "minimum": 0.481832,
+        "median": 0.552237,
+        "maximum": 0.700004
+      },
+      "unknown_probe_samples": 0,
+      "unknown_top1_scores": null,
+      "gallery_sufficient_for_top2": true,
+      "identity_confirmed": false,
+      "threshold_selected": false,
+      "operational_enabled": false
+    }
+  ],
+  "operational_enabled": false,
+  "final_evaluation_used": false
+}

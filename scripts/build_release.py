@@ -32,6 +32,17 @@ def build(destination, *, download_wheels=False, wheelhouse=None):
     for source in (ROOT / "models").iterdir():
         if source.is_file() and source.suffix in {".onnx", ".json", ".md", ".txt"}:
             shutil.copy2(source, destination / "models" / source.name)
+    speech = ROOT / "models/speech/faster-whisper-small"
+    speech_included = (speech / "manifest.json").is_file()
+    if speech_included:
+        # Public, pinned weights are in the offline installer, never backups.
+        sys.path.insert(0, str(ROOT / "backend"))
+        from app.partner_speech import MODEL_FILES, validate_model
+        validate_model(speech)
+        speech_target = destination / "models/speech/faster-whisper-small"
+        speech_target.mkdir(parents=True)
+        for name in sorted(MODEL_FILES | {"manifest.json"}):
+            shutil.copy2(speech / name, speech_target / name)
     public_files = ["backend/alembic.ini", "backend/requirements.lock", "backend/requirements.in",
                     "config/business.json", "pyproject.toml", "THIRD_PARTY_NOTICES.md", "README.md",
                     "HUONG_DAN_VAN_HANH.md", "scripts/start_backend.ps1", "scripts/setup_release.ps1",
@@ -41,6 +52,8 @@ def build(destination, *, download_wheels=False, wheelhouse=None):
                     "scripts/restart_backend.ps1", "scripts/start_sqlserver.py", "scripts/stage_upgrade.py",
                     "scripts/configure_sql_telemetry_egress.ps1"]
     public_files.extend(["scripts/vscode_run.ps1", "scripts/import_employee_photos.py", "scripts/import_employee_dataset.py", "scripts/prepare_profile_references.py", "scripts/configure_trial_shift.py"])
+    public_files.extend(["models/speech/README.md", "models/speech/LICENSE_Whisper.txt", "models/speech/LICENSE_faster_whisper.txt"])
+    public_files.append("docs/CHAM_CONG_DOI_TAC.md")
     for name in public_files:
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -64,12 +77,14 @@ def build(destination, *, download_wheels=False, wheelhouse=None):
         for wheel in wheels:
             shutil.copy2(wheel, destination / "wheels" / wheel.name)
     manifest = {"schema": 1, "target": "Windows x64 / Python 3.12", "docker": False,
+                "local_speech_model_included": speech_included,
                 "frontend_served_by_backend": True, "private_data_included": False,
                 "offline_wheels_included": bool(download_wheels or wheelhouse),
                 "recovery_contract": "authenticated-v2-external-deletion-ledger", "files": {}}
     for path in sorted(destination.rglob("*")):
         if path.is_file():
-            manifest["files"][path.relative_to(destination).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with path.open("rb") as stream:
+                manifest["files"][path.relative_to(destination).as_posix()] = hashlib.file_digest(stream, "sha256").hexdigest()
     (destination / "release-manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest
 

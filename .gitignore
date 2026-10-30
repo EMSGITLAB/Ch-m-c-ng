@@ -10,6 +10,8 @@ models/*.onnx
 models/*.tmp
 models/pad/*.onnx
 models/pad/*.part
+models/speech/faster-whisper-small/
+models/speech/*.part
 **/__pycache__/
 .pytest_cache/
 .ruff_cache/

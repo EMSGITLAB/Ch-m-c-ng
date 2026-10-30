@@ -1,0 +1,269 @@
+/* Unified Face Pose Guide Styling (Slate & Emerald System) */
+
+.face-pose-demo {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.face-pose-demo svg {
+  display: block;
+  width: 140px;
+  max-width: 100%;
+  height: auto;
+}
+
+.face-pose-demo figcaption {
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-admin-muted);
+  max-width: 140px;
+}
+
+.face-collection-panel .pose-instruction.face-pose-instruction {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-md);
+}
+
+.face-collection-panel .face-pose-instruction h3 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 6px 0 8px;
+  color: #065f46;
+}
+
+.face-pose-instruction .pose-step-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #059669;
+  letter-spacing: 0.3px;
+}
+
+.face-collection-panel .face-pose-instruction p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #065f46;
+  margin: 6px 0;
+}
+
+.face-pose-instruction small {
+  font-size: 11px;
+  color: #047857;
+  line-height: 1.5;
+}
+
+.pose-preview {
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin: 0 0 18px;
+  background: var(--brand-slate-50);
+}
+
+.pose-preview-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pose-preview-content > div {
+  flex: 1;
+}
+
+.pose-preview-content h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pose-preview-content p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-admin-muted);
+}
+
+.pose-preview-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pose-preview-options button {
+  width: auto;
+  min-height: 36px;
+  padding: 7px 12px;
+  font-size: 12px;
+  background: #ffffff;
+  color: var(--brand-slate-700);
+  border: 1px solid var(--brand-slate-300);
+  box-shadow: none;
+}
+
+.pose-preview-options button[aria-pressed="true"] {
+  background: var(--brand-slate-900);
+  color: #ffffff;
+  border-color: var(--brand-slate-900);
+}
+
+.camera-face-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.camera-face-frame > svg {
+  position: absolute;
+  inset: 5%;
+  width: 90%;
+  height: 90%;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  z-index: 1;
+}
+
+.face-frame-shade {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 39.8%;
+  height: 76.05%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 600px rgba(15, 23, 42, 0.45);
+}
+
+.frame-segment {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke 0.3s;
+}
+
+.frame-segment.complete {
+  stroke: #10b981;
+  stroke-width: 6;
+}
+
+.frame-direction {
+  fill: none;
+  stroke: #fcd34d;
+  stroke-width: 6;
+  stroke-linecap: round;
+  animation: pose-direction-pulse 1.6s ease-in-out infinite;
+}
+
+.frame-steady {
+  fill: none;
+  stroke: #34d399;
+  stroke-width: 2;
+}
+
+.face-frame-caption {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.camera-idle-guide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.camera-idle-guide .face-pose-demo {
+  width: 48%;
+  height: 67%;
+  display: block;
+}
+
+.camera-idle-guide .face-pose-demo svg {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.camera-idle-guide figcaption {
+  display: none;
+}
+
+.auto-capture-status {
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-sm);
+  background: #ecfdf5;
+  padding: 14px 16px;
+  margin-top: 12px;
+}
+
+.auto-capture-status > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.auto-capture-status strong {
+  font-size: 13px;
+  color: #065f46;
+}
+
+.collection-controls .auto-capture-status p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 8px 0;
+  color: #047857;
+}
+
+.capture-stability {
+  display: flex;
+  gap: 6px;
+}
+
+.capture-stability span {
+  height: 6px;
+  flex: 1;
+  border-radius: 4px;
+  background: #d1fae5;
+}
+
+.capture-stability span.stable {
+  background: #10b981;
+}
+
+@keyframes pose-direction-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 1100px) {
+  .face-collection-panel .pose-instruction.face-pose-instruction {
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+  }
+}

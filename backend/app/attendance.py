@@ -5,14 +5,23 @@ from datetime import UTC, datetime
 from fastapi import HTTPException
 from sqlalchemy import select, update
 
+from .attendance_scope import existing_punch
 from .biometric_state import lock_employee
 from .calendar_guard import assert_event_writable, lock_calendar
 from .devices import aware
 from .matching import SCORING_RULE
-from .models import AttendanceEvent, AuditLog, Device, Employee, RecognitionPolicy, RecognitionSession
+from .models import (
+    AttendanceEvent,
+    AuditLog,
+    Device,
+    Employee,
+    PartnerDeviceBinding,
+    RecognitionPolicy,
+    RecognitionSession,
+)
 
 
-def live_device(db, device_id, token_hash, now, lock=False):
+def live_device(db, device_id, token_hash, now, lock=False, workflow="employee"):
     filters = [
         Device.id == device_id,
         Device.active == True,  # noqa: E712
@@ -31,6 +40,9 @@ def live_device(db, device_id, token_hash, now, lock=False):
         exists = db.scalar(select(Device.id).where(*filters))
     if not exists or not token_hash:
         raise HTTPException(401, "Quyền kiosk đã hết hạn, thay đổi hoặc bị thu hồi.")
+    if workflow == "employee" and db.scalar(select(PartnerDeviceBinding.device_id).where(
+        PartnerDeviceBinding.device_id == device_id, PartnerDeviceBinding.active == True)):  # noqa: E712
+        raise HTTPException(409, "Điểm quét đang gắn Chấm công đối tác; không ghi nhầm vào nhân viên công ty.")
     return db.scalar(select(Device).where(Device.id == device_id).execution_options(populate_existing=True))
 
 
@@ -46,8 +58,9 @@ def commit_recognition(
 ):
     """Lock order: calendar → policy → employee → device → recognition session.
 
-    The recognition pipeline alone may mark a session verified. That pipeline
-    is not enabled yet; this service is exercised on isolated test databases.
+    Only the server recognition pipeline may mark a session verified.
+    cooldown_seconds is retained for API compatibility; shift/workday scope now
+    prevents repeated punches even after that interval has elapsed.
     """
     if not 1 <= cooldown_seconds <= 3600:
         raise ValueError("invalid_cooldown")
@@ -158,7 +171,8 @@ def commit_recognition(
         raise HTTPException(
             503, "Giờ máy chủ đang lùi so với sự kiện gần nhất. Cần kiểm tra đồng hồ máy chủ."
         )
-    duplicate = bool(previous and (now - aware(previous.server_time)).total_seconds() < cooldown_seconds)
+    previous, scope = existing_punch(db, employee.id, session.direction, now)
+    duplicate = previous is not None
     event = (
         previous
         if duplicate
@@ -189,6 +203,7 @@ def commit_recognition(
         "employee_name": display["employee_name"],
         "server_time": aware(event.server_time).isoformat(),
         "direction": event.direction,
+        "attendance_scope": scope,
         "recognition_version": event.recognition_version,
         "recording_scope": ("local_functional_pilot" if event.recognition_version.startswith("trial-pilot-") else
                             "single_person_functional_trial"

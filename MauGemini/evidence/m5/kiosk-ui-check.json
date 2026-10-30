@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-29T05:14:33.046417+00:00",
+  "reference": "Three BiFace terminal photographs supplied by user, 2026-10-29",
+  "layout": [
+    "server clock and greeting",
+    "full-scene camera, no enrollment oval",
+    "last four server-confirmed receipts from this tab",
+    "result strip and existing local Hop le audio"
+  ],
+  "browser": "installed Microsoft Edge, isolated headless profile",
+  "viewport_pixels": [
+    [
+      1280,
+      900
+    ],
+    [
+      768,
+      1100
+    ]
+  ],
+  "screenshots_reviewed": true,
+  "camera_or_real_receipt_retested": false,
+  "real_employee_data_in_screenshots": false,
+  "recent_list_persistence": "in-memory only; cleared on device/direction change and page unload",
+  "third_party_weather_or_cdn_added": false,
+  "frontend_build_passed": true,
+  "node_tests_passed": 26,
+  "in_app_browser_control": "browser.user unavailable; used headless Edge for visual review",
+  "backend_suite": {
+    "passed": 290,
+    "skipped_native_only": 6,
+    "prior_native_sqlserver_suite_passed": 192,
+    "runtime_backend_sources_changed_since_native_suite": false
+  }
+}

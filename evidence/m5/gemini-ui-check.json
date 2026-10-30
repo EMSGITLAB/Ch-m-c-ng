@@ -1,0 +1,81 @@
+{
+  "reference": "MauGemini",
+  "browser": "Codex in-app browser only",
+  "original_css_files": 12,
+  "original_css_identical": true,
+  "responsive_adapter": "gemini-integration.css; wrap header at 641\u2013900px to prevent reference overflow",
+  "dashboard_layout": [
+    {
+      "selector": ".app-header",
+      "sameBox": true,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    },
+    {
+      "selector": ".admin-heading",
+      "sameBox": true,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    },
+    {
+      "selector": ".admin-tabs",
+      "sameBox": true,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    },
+    {
+      "selector": ".overview-kpi-grid",
+      "sameBox": true,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    },
+    {
+      "selector": ".overview-quick-actions",
+      "sameBox": true,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    },
+    {
+      "selector": ".overview-recent-section",
+      "sameBox": false,
+      "samePalette": true,
+      "sameRadius": true,
+      "sameFont": true
+    }
+  ],
+  "table_height_depends_on_real_rows": true,
+  "backend_tests_passed": 309,
+  "native_sql_tests_passed": 208,
+  "offline_nonlocal_attempts": 0,
+  "node_tests_passed": 32,
+  "frontend_build": "passed",
+  "ui_checks": [
+    "real login to isolated test database",
+    "create/edit employee using POST/PATCH",
+    "upload image; explicit multiple-face result; avatar retained",
+    "create/select department",
+    "pair browser to test kiosk",
+    "switch direction with server confirmation",
+    "open shifts/timesheets/calibration/operations panels"
+  ],
+  "responsive_checks": [
+    {
+      "width": 768,
+      "document_width": 753
+    },
+    {
+      "width": 390,
+      "document_width": 386
+    }
+  ],
+  "mock_api_in_live_app": false,
+  "simulated_receipts_in_live_app": false,
+  "recognition_model_or_threshold_changed": false,
+  "accuracy_pad_or_real_tablet_validation": false,
+  "ui_mutations_used_disposable_database_only": true
+}

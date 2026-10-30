@@ -28,16 +28,16 @@ export function FacePoseGuide({ pose }: { pose: Pose }) {
   const motion = pose !== 'front' && !reduced;
   return <figure className="face-pose-demo" aria-label={`Khuôn mặt minh họa: ${poseLabels[pose]}. Trái và phải là phía của bạn trong hình gương.`}>
     <svg key={pose} viewBox="0 0 140 170" role="img" aria-label={poseLabels[pose]}>
-      <defs><linearGradient id={gradient} x1="0" y1="0" x2="1" y2=".8"><stop stopColor="#ecf5e4" /><stop offset="1" stopColor="#bad5ad" /></linearGradient></defs>
-      <path d="M21 29 V17 Q21 9 29 9 H41 M99 9 H111 Q119 9 119 17 V29 M119 137 V149 Q119 157 111 157 H99 M41 157 H29 Q21 157 21 149 V137" fill="none" stroke="#a2b996" strokeWidth="2" strokeLinecap="round" />
-      <g transform={pose === 'right' ? 'translate(130 0) scale(-1 1)' : 'translate(10 0)'} fill="none" stroke="#3a6049" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <defs><linearGradient id={gradient} x1="0" y1="0" x2="1" y2=".8"><stop stopColor="#ecfdf5" /><stop offset="1" stopColor="#a7f3d0" /></linearGradient></defs>
+      <path d="M21 29 V17 Q21 9 29 9 H41 M99 9 H111 Q119 9 119 17 V29 M119 137 V149 Q119 157 111 157 H99 M41 157 H29 Q21 157 21 149 V137" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
+      <g transform={pose === 'right' ? 'translate(130 0) scale(-1 1)' : 'translate(10 0)'} fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d={target.outline} fill={`url(#${gradient})`}><Movement attribute="d" from={front.outline} to={target.outline} enabled={motion} /></path>
-        {[0, 1].map(index => <ellipse key={index} cx={target.eyes[index * 3]} cy={target.eyes[index * 3 + 1]} rx={target.eyes[index * 3 + 2]} ry="3" fill="#3a6049" stroke="none">
+        {[0, 1].map(index => <ellipse key={index} cx={target.eyes[index * 3]} cy={target.eyes[index * 3 + 1]} rx={target.eyes[index * 3 + 2]} ry="3" fill="#047857" stroke="none">
           <Movement attribute="cx" from={front.eyes[index * 3]} to={target.eyes[index * 3]} enabled={motion} />
           <Movement attribute="cy" from={front.eyes[index * 3 + 1]} to={target.eyes[index * 3 + 1]} enabled={motion} />
           <Movement attribute="rx" from={front.eyes[index * 3 + 2]} to={target.eyes[index * 3 + 2]} enabled={motion} />
         </ellipse>)}
-        <path d={target.nose} stroke="#6a8d70"><Movement attribute="d" from={front.nose} to={target.nose} enabled={motion} /></path>
+        <path d={target.nose} stroke="#059669"><Movement attribute="d" from={front.nose} to={target.nose} enabled={motion} /></path>
         <path d={target.mouth}><Movement attribute="d" from={front.mouth} to={target.mouth} enabled={motion} /></path>
       </g>
     </svg>

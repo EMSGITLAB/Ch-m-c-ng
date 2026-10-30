@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "offline_worker": true,
+  "network_disabled_in_worker": true,
+  "audio_duration_seconds": 0.775,
+  "draft_nonempty": true,
+  "draft_characters": 6,
+  "elapsed_seconds": 9.063,
+  "audio_or_transcript_stored": false,
+  "name_accuracy_validation": false
+}

@@ -1,0 +1,31 @@
+{
+  "cause": "Browser had no valid kiosk pairing cookie while local visual tracking remained active",
+  "server_attendance_enabled": true,
+  "configured_people": 368,
+  "repaired_existing_kiosk": true,
+  "user_confirmed_correct_name": true,
+  "recording_threshold_changed": false,
+  "model_changed": false,
+  "backend_tests_passed": 309,
+  "backend_native_only_skipped": 6,
+  "native_sql_unchanged_last_passed": 208,
+  "node_tests_passed": 35,
+  "camera_stop_ui_check": {
+    "paused": true,
+    "readyState": 0
+  },
+  "camera_restart_button_observed": true,
+  "guide_overlay_elements": 0,
+  "controls_outside_video": true,
+  "controls_hidden_after_closing": true,
+  "pairing_code_input_visible": true,
+  "pairing_admin_deep_link_verified": true,
+  "backend_restarted_for_this_fix": false,
+  "group_accuracy_or_pad_validation": false,
+  "compiled_bundle_served": true,
+  "server_final_ready": true,
+  "frontend_build_passed": true,
+  "release": "local-functional-20261029-v10",
+  "offline_release_verified": true,
+  "release_archive_checksum_verified": true
+}

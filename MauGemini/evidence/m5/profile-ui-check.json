@@ -1,0 +1,35 @@
+{
+  "initial": {
+    "photoPicker": true,
+    "departmentOptions": [
+      "Chưa chọn đơn vị",
+      "Dữ liệu thử tách biệt",
+      "+ Thêm đơn vị mới…"
+    ],
+    "cameraButton": true,
+    "upload": true
+  },
+  "result": {
+    "success": "Đã thêm hồ sơ nhân viên. Đã lưu ảnh hồ sơ. Có nhiều khuôn mặt. Chỉ một người đứng trước camera.",
+    "rows": [
+      {
+        "code": "UI-PHOTO",
+        "hasPhoto": true,
+        "unit": "Đơn vị thử mới"
+      },
+      {
+        "code": "UI0001",
+        "hasPhoto": false,
+        "unit": "Dữ liệu thử tách biệt"
+      },
+      {
+        "code": "UI0002",
+        "hasPhoto": false,
+        "unit": "Dữ liệu thử tách biệt"
+      }
+    ]
+  },
+  "passed": true,
+  "isolated_database": true,
+  "real_camera_test": false
+}

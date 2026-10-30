@@ -1,0 +1,16 @@
+{
+  "regression_before": "event-loop-preflight-before.log: preview blocked /health/live and timed out",
+  "regression_after": "event-loop-preflight-after.log: preview/frame/commit 3 passed",
+  "change": "All synchronous kiosk preflight SQL and commit rollback dispatched off the ASGI event loop",
+  "inference_model_pixels_or_thresholds_changed": false,
+  "fault_simulation_only": true,
+  "whole_suite_and_native_sqlserver_recheck_pending": false,
+  "backend_passed": 296,
+  "backend_native_only_skipped": 6,
+  "native_sqlserver_passed": 198,
+  "offline_nonlocal_network_attempts": 0,
+  "frontend_node_passed": 29,
+  "frontend_build_passed": true,
+  "server_received_time_stability_regressions_passed": true,
+  "model_pixels_or_thresholds_changed": false
+}

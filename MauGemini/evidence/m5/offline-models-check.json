@@ -1,0 +1,11 @@
+{
+  "identity_cpu_inference": true,
+  "local_vector_matching": true,
+  "pad_cpu_inference": true,
+  "embedding_dimensions": 128,
+  "nonlocal_network_attempts": 0,
+  "licensed_public_fixture": true,
+  "identity_or_pad_accuracy_validation": false,
+  "images_vectors_exported": false,
+  "user_network_settings_changed": false
+}

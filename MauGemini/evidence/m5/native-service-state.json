@@ -1,0 +1,11 @@
+{
+  "windows_password_embedded": false,
+  "autostart_action_tested": true,
+  "backend_supervisor_task_running": true,
+  "daily_backup_last_run_local": "2026-10-29T03:00:00.0000000+07:00",
+  "checked_at": "2026-10-28T23:17:14.4055742Z",
+  "sql_service_automatic": true,
+  "actual_reboot_tested": false,
+  "daily_backup_last_result": 0,
+  "trigger": "current_user_logon"
+}

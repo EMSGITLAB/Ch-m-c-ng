@@ -6,12 +6,13 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 
 from .auth import Admin, Db, LoginLimiter, MutationAdmin, same_origin
+from .calendar_guard import lock_calendar
 from .config import get_settings
 from .employees import EmployeeInput
-from .models import AuditLog, Device, DevicePairing
+from .models import AuditLog, Device, DevicePairing, PartnerCapture, PartnerDeviceBinding, RecognitionSession
 
 admin_router=APIRouter(prefix="/api/admin/devices",tags=["devices"])
 kiosk_router=APIRouter(prefix="/api/kiosk",tags=["kiosk"])
@@ -160,5 +161,39 @@ Kiosk=Annotated[Device,Depends(current_device)]
 
 
 @kiosk_router.get("/device")
-def kiosk_status(device:Kiosk):
-    return describe(device)
+def kiosk_status(device:Kiosk, db:Db):
+    result = describe(device)
+    binding = db.get(PartnerDeviceBinding, device.id)
+    result["workflow"] = "partner" if binding and binding.active else "employee"
+    result["partner_batch_id"] = binding.batch_id if binding and binding.active else None
+    return result
+
+
+class DirectionInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    direction: Literal["in", "out"]
+
+
+@kiosk_router.patch("/device")
+def change_direction(payload: DirectionInput, request: Request, db: Db, device: Kiosk):
+    same_origin(request)
+    if request.headers.get("x-kiosk-intent") != "change-direction":
+        raise HTTPException(403, "Cần xác nhận thao tác đổi chiều trên kiosk.")
+    from .attendance import live_device
+
+    lock_calendar(db)
+    current = live_device(db, device.id, device.token_hash, datetime.now(UTC), lock=True, workflow="partner")
+    before = current.direction
+    if before != payload.direction:
+        current.direction = payload.direction
+        # Preserve every saved receipt; only unfinished recognition belongs to the old direction.
+        db.execute(update(RecognitionSession).where(RecognitionSession.device_id == current.id,
+            RecognitionSession.state.in_(["pending", "verified"])).values(state="rejected")
+            .execution_options(synchronize_session=False))
+        db.execute(update(PartnerCapture).where(PartnerCapture.device_id == current.id,
+            PartnerCapture.state.in_(["pending", "verified"])).values(state="rejected")
+            .execution_options(synchronize_session=False))
+        db.add(AuditLog(action="kiosk_direction_changed", entity_id=current.id,
+            details={"before": before, "after": current.direction}))
+    db.commit()
+    return kiosk_status(current, db)

@@ -1,0 +1,20 @@
+{
+  "scope": "single-person-functional-v1",
+  "participant_count": 1,
+  "used_receipts": 2,
+  "recorded_events": 1,
+  "directions_observed": [
+    "in"
+  ],
+  "all_receipts_bound_to_participant": true,
+  "report_source_event_count": 1,
+  "report_trial_event_count": 1,
+  "report_assigned_rows": 0,
+  "report_unassigned_events": 1,
+  "local_csv_generated": true,
+  "local_xlsx_generated": true,
+  "identities_images_vectors_exported_in_evidence": false,
+  "user_confirmed_correct_name_and_audio": true,
+  "confirmation_source": "User reply in this session",
+  "pad_or_group_accuracy_validated": false
+}

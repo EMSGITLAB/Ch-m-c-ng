@@ -1,0 +1,31 @@
+{
+  "backend_tests_passed": 317,
+  "backend_native_only_skipped": 6,
+  "native_sql_tests_passed": 216,
+  "native_nonlocal_network_attempts": 0,
+  "frontend_tests_passed": 37,
+  "frontend_build_passed": true,
+  "migration": "20261029_employee_soft_delete",
+  "pre_migration_backup_checksum_verified": true,
+  "runtime_ready": true,
+  "production_counts_before": {
+    "employees": 374,
+    "attendance_events": 31,
+    "face_templates": 368,
+    "imported_face_photos": 370
+  },
+  "production_counts_after": {
+    "employees": 374,
+    "attendance_events": 31,
+    "face_templates": 368,
+    "imported_face_photos": 370
+  },
+  "production_employees_deleted_for_testing": 0,
+  "browser_delete_button_visible": true,
+  "browser_confirmation_and_cancel_checked": true,
+  "browser_deleted_filter_checked": true,
+  "camera_accuracy_or_pad_validation": false,
+  "recognition_threshold_changed": false,
+  "new_audio_speed": 1.35,
+  "new_audio_duration_seconds": 0.7754
+}

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-29",
+  "backend_passed": 261,
+  "backend_native_only_skipped": 6,
+  "isolated_sqlserver_passed": 184,
+  "isolated_sqlserver_includes_native_cases": true,
+  "frontend_node_passed": 26,
+  "frontend_build_passed": true,
+  "ruff_passed": true,
+  "actual_usb_backup_restore_passed": true,
+  "protected_user_recovery_key_verified": true,
+  "user_password_read_or_recorded": false,
+  "python_offline_nonlocal_attempts": 0,
+  "actual_wan_disconnection_tested": false,
+  "physical_reboot_tested": false,
+  "vm_restore_tested": false,
+  "group_accuracy_or_pad_validated": false,
+  "tasks_completed": 32,
+  "tasks_in_current_scope": 38,
+  "live_database_modified_by_test_fixtures": false
+}

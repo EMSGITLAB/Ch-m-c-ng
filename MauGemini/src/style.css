@@ -1,0 +1,657 @@
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Unified Brand & Accent Palette (Shared across Kiosk & Admin) */
+  --brand-primary: #059669;
+  --brand-primary-light: #10b981;
+  --brand-primary-dark: #047857;
+  --brand-primary-soft: #ecfdf5;
+  --brand-primary-border: #a7f3d0;
+  --brand-primary-glow: rgba(16, 185, 129, 0.25);
+
+  --brand-slate-950: #090d16;
+  --brand-slate-900: #0f172a;
+  --brand-slate-800: #1e293b;
+  --brand-slate-700: #334155;
+  --brand-slate-600: #475569;
+  --brand-slate-500: #64748b;
+  --brand-slate-400: #94a3b8;
+  --brand-slate-300: #cbd5e1;
+  --brand-slate-200: #e2e8f0;
+  --brand-slate-100: #f1f5f9;
+  --brand-slate-50: #f8fafc;
+
+  /* Semantic Status Colors */
+  --color-emerald: #10b981;
+  --color-emerald-glow: rgba(16, 185, 129, 0.25);
+  --color-cyan: #10b981; /* Unified with brand emerald for consistent HUD */
+  --color-cyan-glow: rgba(16, 185, 129, 0.2);
+  --color-blue: #2563eb;
+  --color-amber: #d97706;
+  --color-rose: #e11d48;
+
+  /* Kiosk Surface Tokens (Dark Slate Studio) */
+  --bg-kiosk: #0b1120;
+  --bg-kiosk-surface: #0f172a;
+  --bg-kiosk-card: #1e293b;
+  --border-kiosk: rgba(255, 255, 255, 0.1);
+  --text-kiosk-main: #f8fafc;
+  --text-kiosk-muted: #94a3b8;
+
+  /* Admin Surface Tokens (Light Slate Enterprise) */
+  --bg-admin: #f1f5f9;
+  --bg-admin-card: #ffffff;
+  --border-admin: #e2e8f0;
+  --text-admin-main: #0f172a;
+  --text-admin-muted: #475569;
+
+  /* Consistent Geometry */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  font-family: var(--font-sans);
+  color-scheme: dark light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-kiosk);
+  color: var(--text-kiosk-main);
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   1. UNIFIED SHELL & PERSISTENT TOP HEADER (Shared by Kiosk & Admin)
+   ========================================================================== */
+.shell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-shell {
+  background: radial-gradient(circle at 50% 0%, #17253b 0%, #0b1120 75%);
+  color: var(--text-kiosk-main);
+}
+
+.admin-shell-wrapper {
+  background: var(--bg-admin);
+  color: var(--text-admin-main);
+}
+
+/* Unified Top Navigation Bar — Identical Deep Slate & Emerald across Kiosk & Admin */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 28px;
+  background: var(--brand-slate-900);
+  color: #f8fafc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #ffffff;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  letter-spacing: -0.5px;
+}
+
+.brand-title {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+}
+
+.brand-sub {
+  display: block;
+  font-size: 11.5px;
+  color: var(--brand-slate-400);
+  font-weight: 400;
+  margin-top: 1px;
+}
+
+/* Unified Mode Switcher in Header */
+.view-nav {
+  display: inline-flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--brand-slate-300);
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 38px;
+  box-shadow: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
+}
+
+.nav-tab-btn.selected {
+  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+}
+
+/* Header Right Actions */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fullscreen-toggle-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--brand-slate-200);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.fullscreen-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: none;
+}
+
+.connection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-slate-200);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 8px 14px;
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.connection-badge i,
+.capture-status-badge i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand-slate-500);
+  flex-shrink: 0;
+}
+
+.connection-badge i.online,
+.capture-status-badge i.online {
+  background: var(--brand-primary-light);
+  box-shadow: 0 0 10px var(--brand-primary-light);
+}
+
+.pulse {
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.88); }
+}
+
+/* ==========================================================================
+   2. STANDARDIZED BUTTON SYSTEM (Unified Across All Kiosk & Admin Panels)
+   ========================================================================== */
+button {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 10px 18px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--brand-primary-light) 0%, var(--brand-primary) 100%);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.22);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Primary Explicit Classes */
+.primary-touch-btn,
+.primary-pill-btn {
+  background: linear-gradient(135deg, var(--brand-primary-light) 0%, var(--brand-primary) 100%);
+  color: #ffffff;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 20px;
+  min-height: 46px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
+}
+
+/* Secondary / Neutral Outline Buttons */
+button.secondary,
+.secondary-pill-btn,
+.secondary-touch-btn {
+  background: #ffffff;
+  color: var(--brand-slate-800);
+  border: 1px solid var(--brand-slate-300);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 18px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button.secondary:hover:not(:disabled),
+.secondary-pill-btn:hover:not(:disabled),
+.secondary-touch-btn:hover:not(:disabled) {
+  background: var(--brand-slate-100);
+  border-color: var(--brand-slate-400);
+  color: var(--brand-slate-900);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary buttons inside dark Kiosk surface */
+.terminal-shell button.secondary,
+.terminal-shell .secondary-pill-btn,
+.terminal-shell .secondary-touch-btn {
+  background: rgba(30, 41, 59, 0.85);
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+}
+
+.terminal-shell button.secondary:hover:not(:disabled),
+.terminal-shell .secondary-pill-btn:hover:not(:disabled),
+.terminal-shell .secondary-touch-btn:hover:not(:disabled) {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+/* Compact Table / Inline Action Buttons (.text-button) */
+button.text-button {
+  background: var(--brand-slate-100);
+  color: var(--brand-slate-800);
+  border: 1px solid var(--brand-slate-200);
+  box-shadow: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  min-height: 34px;
+  border-radius: 8px;
+}
+
+button.text-button:hover:not(:disabled) {
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-border);
+  box-shadow: none;
+}
+
+/* Danger / Destructive Buttons */
+button.danger,
+button.text-button.danger,
+.logout-btn {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  box-shadow: none;
+}
+
+button.danger:hover:not(:disabled),
+button.text-button.danger:hover:not(:disabled),
+.logout-btn:hover:not(:disabled) {
+  background: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.25);
+}
+
+/* ==========================================================================
+   3. UNIFIED SEGMENTED NAVIGATION TABS (Across Admin, Shifts, Timesheets, AI)
+   ========================================================================== */
+.admin-tabs,
+.schedule-tabs,
+.timekeeping-tabs,
+.ai-review-nav {
+  display: flex;
+  gap: 6px;
+  background: #e2e8f0;
+  padding: 5px;
+  border-radius: var(--radius-md);
+  margin: 0 0 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-tabs button,
+.schedule-tabs button,
+.timekeeping-tabs button,
+.ai-review-nav button {
+  background: transparent;
+  color: var(--brand-slate-600);
+  border: 0;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.admin-tabs button:hover:not(:disabled),
+.schedule-tabs button:hover:not(:disabled),
+.timekeeping-tabs button:hover:not(:disabled),
+.ai-review-nav button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--brand-slate-900);
+  box-shadow: none;
+}
+
+.admin-tabs button.selected,
+.schedule-tabs button.selected,
+.timekeeping-tabs button.selected,
+.ai-review-nav button.selected {
+  background: var(--brand-slate-900);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+/* ==========================================================================
+   4. STANDARDIZED FORMS, INPUTS, FIELDSETS & DIALOGS
+   ========================================================================== */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-admin-main);
+  margin-bottom: 14px;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select,
+textarea {
+  min-height: 44px;
+  border: 1px solid var(--brand-slate-300);
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-admin-main);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+input[type="file"] {
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px dashed var(--brand-slate-300);
+  border-radius: var(--radius-sm);
+  background: var(--brand-slate-50);
+  color: var(--text-admin-main);
+  cursor: pointer;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
+}
+
+.checkbox-label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin: 10px 0;
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--text-admin-main);
+}
+
+.checkbox-label input[type="checkbox"] {
+  min-height: 18px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-primary);
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+fieldset {
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin: 0 0 20px;
+  background: var(--brand-slate-50);
+  min-width: 0;
+}
+
+legend {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--brand-slate-700);
+  padding: 0 8px;
+}
+
+/* Standardized Helper Typography */
+.section-explanation {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-admin-muted);
+  margin: 0 0 18px;
+}
+
+.import-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--brand-slate-500);
+  margin: 12px 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 36px 20px !important;
+  color: var(--brand-slate-500) !important;
+  font-size: 13.5px;
+}
+
+/* Modal Dialogs */
+dialog {
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: min(560px, calc(100% - 32px));
+  background: #ffffff;
+  color: var(--text-admin-main);
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.35);
+}
+
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-admin);
+}
+
+.dialog-heading h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--brand-slate-900);
+}
+
+/* Alerts & Notices */
+.error {
+  padding: 12px 16px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fda4af;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 14px 0;
+}
+
+.success {
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 14px 0;
+}
+
+.admin-shell-wrapper .error {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #be123c;
+}
+
+.admin-shell-wrapper .success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+/* App Footer */
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: auto;
+  font-size: 12px;
+  color: var(--text-kiosk-muted);
+}
+
+.admin-shell-wrapper .app-footer {
+  background: #ffffff;
+  border-top-color: var(--border-admin);
+  color: var(--text-admin-muted);
+}

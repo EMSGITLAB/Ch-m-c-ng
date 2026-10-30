@@ -102,7 +102,7 @@ def test_retry_is_identical_after_response_loss_profile_edit_expiry_and_policy_r
         )
 
 
-def test_cross_device_cooldown_and_exact_boundary_preserve_original_event(attendance):
+def test_cross_device_rescan_beyond_old_cooldown_preserves_original_event(attendance):
     _, factory, now, ids, session, record = attendance
     first = record(session())
     with factory() as db:
@@ -116,10 +116,11 @@ def test_cross_device_cooldown_and_exact_boundary_preserve_original_event(attend
     assert duplicate["server_time"] == first["server_time"]
     assert record(request, device=1) == duplicate
     boundary = record(session(device=1), device=1, at=now + timedelta(seconds=60))
-    assert boundary["status"] == "recorded"
-    assert boundary["event_id"] != first["event_id"]
+    assert boundary["status"] == "duplicate"
+    assert boundary["event_id"] == first["event_id"]
+    assert boundary["attendance_scope"]["type"] == "workday"
     with factory() as db:
-        assert db.scalar(select(func.count()).select_from(AttendanceEvent)) == 2
+        assert db.scalar(select(func.count()).select_from(AttendanceEvent)) == 1
 
 
 @pytest.mark.parametrize(
@@ -178,6 +179,24 @@ def test_in_and_out_are_independent_and_clock_regression_is_not_success(attendan
     with pytest.raises(HTTPException) as error:
         record(session(), at=now - timedelta(seconds=1))
     assert error.value.status_code == 503
+
+
+def test_delete_preserves_original_punch_and_blocks_pending_recognition(attendance):
+    from test_admin import setup
+
+    browser, factory, _, ids, session, record = attendance
+    first = record(session())
+    pending = session()
+    headers = {"X-CSRF-Token": setup(browser)}
+    assert browser.delete("/api/admin/employees/"+ids[0], headers=headers).status_code == 200
+    with pytest.raises(HTTPException) as error:
+        record(pending)
+    assert error.value.status_code == 409
+    with factory() as db:
+        original = db.get(AttendanceEvent, first["event_id"])
+        assert original.employee_id == ids[0]
+        assert original.server_time.isoformat().startswith(first["server_time"][:19])
+        assert db.scalar(select(func.count()).select_from(AttendanceEvent)) == 1
 
 
 def test_failure_rolls_back_event_receipt_and_audit_together(attendance):

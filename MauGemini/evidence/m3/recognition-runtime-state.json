@@ -1,0 +1,15 @@
+{
+  "schema_revision": "20261028_functional_trial",
+  "enabled_policies": 1,
+  "operational_templates": 1,
+  "recognition_sessions": 3,
+  "recognition_frames": 18,
+  "attendance_events": 1,
+  "attendance_enabled": true,
+  "attendance_mode": "functional_trial",
+  "recognition_ready": true,
+  "experimental_pad_ready": true,
+  "pad_validated_for_attendance": false,
+  "unauthenticated_start_status": 401,
+  "identities_images_vectors_exported": false
+}

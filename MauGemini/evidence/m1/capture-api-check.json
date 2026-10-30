@@ -1,0 +1,27 @@
+{
+  "target": "http://127.0.0.1:8000",
+  "actual_model_endpoint": true,
+  "generated_images_only": true,
+  "results": [
+    {
+      "case": "invalid-image",
+      "status": 422,
+      "passed": true
+    },
+    {
+      "case": "oversized-upload",
+      "status": 413,
+      "passed": true
+    },
+    {
+      "case": "oversized-dimensions",
+      "status": 422,
+      "passed": true
+    },
+    {
+      "case": "live-after-rejections",
+      "passed": true
+    }
+  ],
+  "images_saved": false
+}

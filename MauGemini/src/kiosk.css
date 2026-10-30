@@ -1,0 +1,62 @@
+/* Clean Kiosk HUD styling */
+
+.kiosk-capture .camera-view {
+  aspect-ratio: 4 / 3;
+  align-self: stretch;
+}
+
+.kiosk-capture .camera-view video {
+  object-fit: cover;
+}
+
+.kiosk-capture > audio {
+  display: none;
+}
+
+.kiosk-tracking-box {
+  position: absolute;
+  pointer-events: none;
+  border: 2px solid var(--color-emerald);
+  border-radius: 12px;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+  z-index: 15;
+}
+
+.kiosk-tracking-box > span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100%;
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  background: rgba(16, 185, 129, 0.9);
+  color: #042f2e;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-radius: 4px;
+}
+
+.recognition-review {
+  border: 1px solid var(--border-admin);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin: 20px 0;
+  background: #ffffff;
+}
+
+.recognition-review h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.recognition-review .time-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.recognition-review .time-actions button {
+  width: auto;
+}

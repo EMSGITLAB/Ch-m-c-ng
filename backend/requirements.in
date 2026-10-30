@@ -13,4 +13,5 @@ pytest>=8,<10
 ruff>=0.9,<1
 openpyxl>=3.1.5,<4
 cryptography>=50,<51
+faster-whisper==1.2.1
 

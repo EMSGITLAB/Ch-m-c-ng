@@ -1,0 +1,16 @@
+[
+  {
+    "tool": "caddy",
+    "version": "2.11.7",
+    "source": "https://github.com/caddyserver/caddy/releases/download/v2.11.7/caddy_2.11.7_windows_amd64.zip",
+    "sha512": "c308154504e53755958ffc62d8a2657ab17eefd6dd25c45dbb2c3d93d29519971f77ca652f7d0f2bcb7f980b9ba3822478865e29969d0272d7613550a43152b1",
+    "vendor_checksum_verified": true
+  },
+  {
+    "tool": "postgresql",
+    "version": "17.11 (provider archive)",
+    "source": "https://sbp.enterprisedb.com/getfile.jsp?fileid=1260616",
+    "sha256": "80379b2c04d51c30225532e0ae04509899141e9957ed096fe749d7fd9df8f82f",
+    "vendor_checksum_verified": false
+  }
+]
