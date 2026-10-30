@@ -6,9 +6,9 @@ Camera, vector, so khớp và giọng nói đều xử lý local; không Docker/
 ## Chuẩn bị đợt
 
 1. Vào **Quản trị → Chấm công đối tác**. Đối tác thử đã có mã `D23`, tên **Đối tác sàn D23**.
-2. Tạo đợt nháp: tên, sàn, ngày bắt đầu, giờ bắt đầu/kết thúc, số lao động yêu cầu và hạn mức được tiếp nhận. Giờ kết thúc nhỏ hơn giờ bắt đầu là ca qua đêm, dùng ngày bắt đầu làm ngày công.
+2. Bấm **+ Tạo đợt / ca mới** để mở form tạo nhanh, hoặc vào tab **4. Danh mục Đối tác**. Nhập tên, sàn, ngày bắt đầu, giờ bắt đầu/kết thúc, số lao động yêu cầu và hạn mức được tiếp nhận. Giờ kết thúc nhỏ hơn giờ bắt đầu là ca qua đêm, dùng ngày bắt đầu làm ngày công.
 3. Có thể khai báo khoảng nghỉ giữa ca, chọn có tính công hay không. Cấu hình ca/nghỉ được giữ cùng đợt; không tự lấy ca nhân viên công ty.
-4. Điền lý do thao tác, chọn **Mở tiếp nhận**. Hệ thống ghim cấu hình nhận diện đang hợp lệ; không tự đổi model/ngưỡng. Nếu cấu hình đang chạy thử, báo cáo và CSV ghi rõ không dùng làm chứng từ thanh toán.
+4. Tại tab **1. Điều phối Đợt & Thiết bị**, điền lý do thao tác và chọn **Mở tiếp nhận**. Hệ thống ghim cấu hình nhận diện đang hợp lệ; không tự đổi model/ngưỡng. Nếu cấu hình đang chạy thử, báo cáo và CSV ghi rõ không dùng làm chứng từ thanh toán.
 5. Tạo/ghép một điểm kiosk tại **Thiết bị Kiosk**, rồi gán điểm đó cho đợt đối tác. Điểm đã gán đợt đối tác không ghi công vào phân hệ nhân viên công ty. Mã ghép dùng một lần; không gửi mã hoặc mật khẩu qua chat.
 6. Mở **Chấm công đối tác** ở thanh điều hướng hoặc `#partner`. Màn hình hiện đối tác, ca và chiều Vào/Ra của đúng điểm quét. Camera bật tự động khi cấu hình sẵn sàng; mở **Tùy chọn** để bật/tắt camera, ghép thiết bị hoặc thử giọng đọc.
 
@@ -21,7 +21,7 @@ Trên laptop dùng localhost. iPad/tablet truy cập qua mạng cần HTTPS tin 
 3. Trong popup chọn **Đọc họ tên** hoặc **Nhập bằng tay**. Bấm micro và đọc đầy đủ họ tên; có thể bấm micro lần nữa để gửi ngay. Khi phát hiện đã nói và có khoảng lặng khoảng 1 giây, bộ thu tự kết thúc; giới hạn vẫn là 8 giây khi quá ồn, âm lượng thấp hoặc thiết bị không hỗ trợ theo dõi mức âm. Kiểm tra chữ/dấu và sửa kết quả. Hoặc nhập trực tiếp trong ô Họ và tên. Micro lỗi, bị từ chối hoặc nhận tên chậm không khóa ô nhập tay.
 4. Bấm **Xác nhận họ tên**. Họ tên tự khai dùng để đối soát; không phải chứng minh danh tính bằng giọng nói. Đổi giữa micro/nhập tay không tạo mã khác. Kết quả micro tới muộn không ghi đè tên đã nhập/xác nhận.
 5. Tiếp tục giữ mặt trước camera. Hệ thống kiểm tra lại đúng người và **tự động ghi Vào**, hiện mã/tên/giờ, đóng popup và phát tệp “Hợp lệ” đã chọn của OnTime. **Không có bước chờ quản trị cho phép tiếp nhận.**
-6. Quản trị chỉ theo dõi kết quả tại **Theo dõi tiếp nhận tự động**, không phải duyệt từng người. Người đã Vào không phải đọc tên lần nữa.
+6. Quản trị chỉ theo dõi kết quả tại tab **2. Giám sát Tiếp nhận**, không phải duyệt từng người. Người đã Vào không phải đọc tên lần nữa.
 
 Phiên giữ mã chờ xác nhận tên tối đa 5 phút. Khi xác nhận tên hoặc ghi Vào, camera chỉ đối chiếu lại với đúng người đang giữ mã; mặt khác không được cấp thêm mã trong bước này. Tải lại trang khôi phục cùng phiên nhập tên. Hết phiên hiển thị Quét lại, không tự cấp mã ở phía sau popup. Hủy/hết phiên chưa ghi công; số đã cấp không được tái sử dụng. Người ở điểm khác đang tiếp nhận được báo rõ, không giữ thêm mã. Nếu đổi người trước camera, không gắn tên của người cũ cho mặt mới.
 
@@ -43,7 +43,7 @@ Máy chủ nạp sẵn model giọng nói trong nền khi khởi động, không
 
 1. **Dừng nhận người mới** chuyển đợt sang Đang thực hiện; người đã Vào vẫn được quét Ra.
 2. Khi kết thúc ghi nhận, chọn **Chuyển đối soát**. Bước này dừng ghi Vào/Ra để kiểm tra và chỉnh công.
-3. Tại **Theo dõi và đối soát**, lọc khoảng ngày (tối đa 93 ngày), đối tác, sàn và chọn đợt. Lọc dòng đủ cặp/thiếu cặp/chưa tiếp nhận; có phân trang.
+3. Tại tab **3. Đối soát & Xuất công**, lọc khoảng ngày (tối đa 93 ngày), đối tác, sàn và chọn đợt. Nút **Đối soát →** ở dòng đợt mở trực tiếp đúng đợt cần xem. Lọc dòng đủ cặp/thiếu cặp/chưa tiếp nhận; có phân trang.
 4. Kiểm tra số yêu cầu/hạn mức, đã Vào, đủ/thiếu cặp và tổng giờ đủ điều kiện. “Chưa ghi lượt Ra” không khẳng định người còn hiện diện. Thiếu Ra không tự lấy giờ cuối ca hoặc tính đủ công.
 5. Giờ công của cặp đầy đủ là thời gian nằm trong ca sau trừ phần nghỉ không tính công thực sự chồng lên cặp Vào/Ra. Không trừ nghỉ hai lần; thời gian ngoài ca được thể hiện riêng, chưa tính tiền/hệ số ngoài giờ.
 6. **Gốc & lịch sử** xem lượt camera và toàn bộ điều chỉnh. **Điều chỉnh** chỉ có khi đợt Chờ đối soát và người đã Vào. Nhập/sửa tên hoặc giờ theo múi giờ của ca, bắt buộc có lý do. Chỉ trường thay đổi mới được lưu; lượt gốc, mã và mẫu mặt không bị ghi đè. Bảng đã thay đổi sẽ yêu cầu tải lại thay vì sửa trên nguồn cũ.

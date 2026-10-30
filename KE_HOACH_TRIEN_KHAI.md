@@ -1286,3 +1286,15 @@ P5: người dùng đã xác nhận tự ghi Vào; SQL có 1 lượt Vào, 1 ng�
 Đổi tên mục điều hướng Chấm công (Kiosk) thành Chấm công nội bộ theo yêu cầu người dùng; giữ route #kiosk, quyền, camera và nghiệp vụ. Hướng dẫn vận hành cập nhật tên hiện hành.
 
 Hoàn thành phân hệ đối tác P0–P5 về chức năng và một phiên người thật trên laptop: người dùng xác nhận nghe âm thử, Ra và quét lặp không đọc; SQL đúng một cặp cùng worker, duplicate không tăng sự kiện, Employee giữ 374. Bảng công/CSV đã đối chiếu, các phiên bỏ dở không có công. Bộ cài cuối v6 (217 tệp) đã cài/xác minh offline ở venv mới, có nhãn Chấm công nội bộ; không chứa dữ liệu riêng. Checklist P5 đã cập nhật trong PHUONG_AN_CHAM_CONG_DOI_TAC.md; audit từng tiêu chí tại docs/NGHIEM_THU_CHAM_CONG_DOI_TAC.md, bằng chứng evidence/m5/partner-p5-final-check.json. Không gán đạt PAD/độ chính xác nhóm/tablet/tải/độ trễ tên thực tế; giữ nhóm thử này riêng. Không đánh dấu hoàn tất các hạng mục tồn của dự án nội bộ trước đây chỉ vì Goal đối tác đã xong.
+
+### Đối chiếu UI đối tác với mẫu Gemini mới
+
+- [x] Mở mẫu tại MauGemini trong Codex Browser; kiểm tra Điều phối, Giám sát, Đối soát, Danh mục, tạo đợt nhanh và kiosk đối tác.
+- [x] Áp dụng 5 component view và 3 stylesheet từ mẫu; entrypoint giữ API local, không đưa mockApi/AI Studio vào bản chạy chính. Core nhận diện/luồng/micro/âm báo/nhường camera giữ hash cũ.
+- [x] Kiểm tra chuyển tab/chọn đúng đợt, responsive/popup và hồi quy; lưu bằng chứng, cập nhật bộ cài.
+
+Đã build thành công, 63 frontend checks đạt; backend 381 passed/10 native-only skipped. Trang đối chiếu dùng dữ liệu minh họa ở cổng riêng và không tự mở camera hoặc kết nối SQL. Bản chạy D23 ở 5173 đã hiển thị bố cục mới; không thao tác thay đổi đợt/dữ liệu thật trong bước so giao diện.
+
+Kết quả: bốn view quản trị, tạo đợt nhanh, kiosk ba cột và popup đã dùng component/CSS mẫu mới. Liên kết đợt thứ hai và việc giữ đợt giữa Giám sát/Đối soát đã thử bằng dữ liệu minh họa; khung thực tế 768 và 390 px không tràn ngang, footer popup trong màn hình. Bản D23 thật đã hiển thị overview mới; khi mở tiếp các tab phiên quản trị hết hạn và đã hỏi người dùng đăng nhập lại, không bỏ xác thực. 64 file backend và 5 module core giữ nguyên; SQL chỉ đọc vẫn 374 Employee, 1 đợt/2 sự kiện đối tác. Bộ cài v7 đã xác minh checksum/cài offline venv mới/model/âm thanh; không chứa mock hoặc dữ liệu thật. Bằng chứng evidence/m5/gemini-partner-ui-check.json và gemini-partner-admin-after.png (ảnh dữ liệu minh họa, không phải nghiệm thu người thật). Không thử lại camera người thật hoặc đổi model/ngưỡng trong công việc UI này.
+
+Sau khi người dùng đăng nhập lại: đã kiểm tra đủ bốn view bằng dữ liệu D23 thật, liên kết Tiếp nhận mở đúng đợt và chuyển Đối soát vẫn giữ đúng lựa chọn. Báo cáo có đúng 1 người Vào/1 cặp đủ, 0 thiếu/0 đang tiếp nhận, 0,36 giờ; danh mục đúng D23. Đã mở/hủy form tạo nhanh, không gửi hoặc thay đổi dữ liệu. Ảnh live không chứa hồ sơ người: evidence/m5/gemini-partner-live-d23.png. Điểm chờ phiên quản trị đã được giải quyết; không cần sửa phần mềm hoặc chạy lại kiểm thử do không có thay đổi code.

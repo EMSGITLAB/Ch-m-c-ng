@@ -36,7 +36,7 @@ export function DevicesPanel({ csrf, onUnauthorized }: { csrf: string; onUnautho
     fetch('/api/kiosk/device')
       .then(r => (r.ok ? r.json() : null))
       .then(d => {
-        if (d) setCurrentKiosk(d);
+        if (d?.paired && d.active) setCurrentKiosk(d);
         else setCurrentKiosk(null);
       })
       .catch(() => setCurrentKiosk(null));
@@ -111,6 +111,7 @@ export function DevicesPanel({ csrf, onUnauthorized }: { csrf: string; onUnautho
         throw new Error(typeof result.detail === 'string' ? result.detail : 'Mã ghép cần đủ 8 chữ số hợp lệ.');
       }
       setCurrentKiosk(result);
+      window.dispatchEvent(new Event('kiosk-device-changed'));
       setPairingSuccess(`Đã ghép thành công thiết bị này với điểm: "${result.name}"`);
       setPairingInputCode('');
       setRefresh(n => n + 1);

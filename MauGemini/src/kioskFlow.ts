@@ -30,7 +30,7 @@ export class KioskFlow {
   private done(value: unknown) {
     if (!this.id || !validReceipt(value, this.id)) throw new KioskError(503,'Chưa nhận được biên nhận hợp lệ. Đang kiểm tra lại kết quả.');
     this.clear(); this.awaitLeave = true; this.waitUntil = this.ports.now() + 4000;
-    this.emit({phase:'success',feedback:value.status === 'recorded' ? 'Đã ghi nhận chấm công.' : 'Lượt này đã có, không ghi thêm.',receipt:value,stableFrames:3});
+    this.emit({phase:'success',feedback:value.status === 'recorded' ? 'Đã ghi nhận chấm công.' : value.direction === 'in' ? 'Đã quét vào ca. Không ghi thêm lượt.' : 'Đã quét ra ca. Không ghi thêm lượt.',receipt:value,stableFrames:3});
   }
   private async commit() {
     if (!this.id) return;

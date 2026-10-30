@@ -127,24 +127,18 @@ body {
 }
 
 .mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary));
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 16px;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-  letter-spacing: -0.5px;
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .brand-title {
   display: block;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
   color: #ffffff;
 }
 

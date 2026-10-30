@@ -2,438 +2,161 @@ import { useEffect, useRef, useState } from 'react';
 import { startLocalFaceTracker } from './localFaceTracker';
 import { fullFramePhoto } from './cameraCapture';
 import { KioskAnnouncement } from './kioskAnnouncement';
-import { mirrorFaceBox } from './faceTracking';
+import { mirrorFaceBox, sceneLayout } from './faceTracking';
 import { KioskError, KioskFlow, type FlowState, type Receipt } from './kioskFlow';
-import type { KioskDevice } from './PairingPanel';
+import { PairingPanel, type KioskDevice } from './PairingPanel';
+import { kioskReadiness } from './kioskReadiness';
+import { connectCameraOwner } from './cameraLease';
 import './kiosk.css';
 import './terminal.css';
 
-export type KioskStatus = {
-  server_time: string;
-  timezone: string;
-  recognition_ready: boolean;
-  attendance_enabled: boolean;
-  attendance_mode?: string | null;
-  pilot_people?: number;
-  pilot_scope?: string;
-  capture_max_edge?: number;
-  message: string;
-  version: string;
-};
+export type KioskStatus = {server_time:string; timezone:string; recognition_ready:boolean; attendance_enabled:boolean; attendance_mode?:string|null; pilot_people?:number; pilot_scope?:string; capture_max_edge?:number; message:string; version:string};
+const titles: Record<FlowState['phase'],string> = {aligning:'Đang tìm khuôn mặt',processing:'Đang xử lý',waiting:'Chờ đối chiếu',committing:'Đang ghi công',recovering:'Đang kiểm tra kết quả',success:'Đã hoàn tất',retry:'Vui lòng thử lại',offline:'Chưa kết nối máy chủ',disabled:'Dò mặt tự động · chưa ghi công',unauthorized:'Cần ghép lại thiết bị'};
 
-const titles: Record<FlowState['phase'], string> = {
-  aligning: 'Đang tìm khuôn mặt',
-  processing: 'Đang xử lý hình ảnh',
-  waiting: 'Chờ đối chiếu quản trị',
-  committing: 'Đang lưu vào bảng công',
-  recovering: 'Đang kiểm tra kết quả',
-  success: 'Chấm công thành công',
-  retry: 'Vui lòng căn thẳng lại',
-  offline: 'Chưa kết nối máy chủ',
-  disabled: 'Dò mặt tự động · Chưa ghi công',
-  unauthorized: 'Cần ghép lại thiết bị',
-};
-
-export function KioskCapture({
-  status,
-  device,
-  onDirectionChange,
-}: {
-  status: KioskStatus | null;
-  device: KioskDevice | null;
-  onDirectionChange?: (dir: 'in' | 'out') => void;
-}) {
-  const video = useRef<HTMLVideoElement>(null);
-  const stream = useRef<MediaStream | null>(null);
-  const generation = useRef(0);
-  const activeRequest = useRef<AbortController | null>(null);
-  const flow = useRef<KioskFlow | null>(null);
-  const runtime = useRef({ status, device });
-  runtime.current = { status, device };
-
-  const [camera, setCamera] = useState(false);
-  const [starting, setStarting] = useState(false);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
-  const [error, setError] = useState('');
-  const [tracking, setTracking] = useState<ReturnType<typeof mirrorFaceBox>>(null);
-  const [localBoxes, setLocalBoxes] = useState<number[][] | null>(null);
-  const [showDemoModal, setShowDemoModal] = useState(false);
-  const [demoEmployees, setDemoEmployees] = useState<{ id: string; code: string; name: string; department: string }[]>([]);
-  const [demoBusy, setDemoBusy] = useState(false);
-
-  useEffect(() => {
-    if (!camera || !video.current) {
-      setLocalBoxes(null);
-      return;
-    }
-    return startLocalFaceTracker(video.current, setLocalBoxes);
-  }, [camera]);
-
-  const shownBoxes = localBoxes === null ? (tracking ? [tracking] : []) : localBoxes.map(mirrorFaceBox).filter(box => box !== null);
-  const autoAttempt = useRef('');
-  const [aspect, setAspect] = useState(4 / 3);
-  const [audioMessage, setAudioMessage] = useState('');
-  const audio = useRef<HTMLAudioElement>(null);
-  const announcement = useRef<KioskAnnouncement | null>(null);
-  const [state, setState] = useState<FlowState>({ phase: 'disabled', feedback: 'Bật camera hoặc chạm Chấm công thử để bắt đầu.' });
-  const [recent, setRecent] = useState<Receipt[]>([]);
-  const enabled = !!(status?.attendance_enabled && device?.active && device.paired);
-
-  useEffect(() => {
+export function KioskCapture({status,device,onDirectionChange,onDeviceChange,directionBusy=false}:{status:KioskStatus|null;device:KioskDevice|null;onDeviceChange?:(device:KioskDevice|null)=>void;onDirectionChange?:(direction:'in'|'out')=>void;directionBusy?:boolean}) {
+  const cameraView=useRef<HTMLDivElement>(null);
+  const video=useRef<HTMLVideoElement>(null), stream=useRef<MediaStream|null>(null);
+  const generation=useRef(0), activeRequest=useRef<AbortController|null>(null), flow=useRef<KioskFlow|null>(null);
+  const cameraOwner=useRef<ReturnType<typeof connectCameraOwner>|null>(null);
+  const runtime=useRef({status,device}); runtime.current={status,device};
+  const [camera,setCamera]=useState(false),[starting,setStarting]=useState(false);
+  const [error,setError]=useState('');
+  const [tracking,setTracking]=useState<ReturnType<typeof mirrorFaceBox>>(null);
+  const [localBoxes,setLocalBoxes]=useState<number[][] | null>(null);
+  useEffect(()=>{
+    if(!camera||!video.current){setLocalBoxes(null);return;}
+    return startLocalFaceTracker(video.current,setLocalBoxes);
+  },[camera]);
+  const shownBoxes=localBoxes===null?(tracking?[tracking]:[]):localBoxes.map(mirrorFaceBox).filter(box=>box!==null);
+  const autoAttempt=useRef('');
+  const [aspect,setAspect]=useState(4/3),[audioMessage,setAudioMessage]=useState('');
+  const [scene,setScene]=useState<ReturnType<typeof sceneLayout>>({});
+  useEffect(()=>{
+    const element=cameraView.current;if(!element)return;
+    const resize=()=>{const r=element.getBoundingClientRect();setScene(sceneLayout(r.width,r.height,aspect));};
+    resize();const observer=new ResizeObserver(resize);observer.observe(element);
+    return()=>observer.disconnect();
+  },[aspect]);
+  const audio=useRef<HTMLAudioElement>(null),announcement=useRef<KioskAnnouncement|null>(null);
+  const [state,setState]=useState<FlowState>({phase:'disabled',feedback:'Bật camera để kiểm tra thiết bị.'});
+  const [recent,setRecent]=useState<Receipt[]>([]);
+  const [controlsOpen,setControlsOpen]=useState(false);
+  const [pairingOpen,setPairingOpen]=useState(false);
+  const [facingMode,setFacingMode]=useState<'user'|'environment'>('user');
+  const readiness=kioskReadiness(status,device);
+  const enabled=readiness.canRecord;
+  useEffect(()=>{
     setTracking(mirrorFaceBox(state.faceBox));
-    const timer = setTimeout(() => setTracking(null), 1800);
-    return () => clearTimeout(timer);
-  }, [state.faceBox]);
-
-  // Load sample employees for instant tablet demo mode
-  useEffect(() => {
-    fetch('/api/admin/employees?limit=6')
-      .then(r => r.json())
-      .then(d => {
-        if (d?.items) setDemoEmployees(d.items);
-      })
-      .catch(() => {});
-  }, []);
-
-  function playHopLeSound(employeeName?: string) {
-    // 1. Play native Vietnamese audio file "hop-le-dut-khoat.wav"
-    if (audio.current) {
-      const player = audio.current;
-      player.muted = false;
-      player.volume = 1;
-      player.currentTime = 0;
-      void player
-        .play()
-        .then(() => setAudioMessage('Âm thanh: Hợp lệ'))
-        .catch(() => {
-          // Fallback to speech synthesis if audio element autoplay is blocked
-        });
-    }
-
-    // 2. Synthesize clear spoken voice "Hợp lệ" in Vietnamese
-    if ('speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel();
-        const text = employeeName ? `Hợp lệ. Chào ${employeeName}.` : 'Hợp lệ.';
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'vi-VN';
-        utterance.rate = 1.05;
-        setTimeout(() => {
-          window.speechSynthesis.speak(utterance);
-        }, 150);
-      } catch {
-        // speech synthesis not supported
-      }
-    }
-  }
+    const timer=setTimeout(()=>setTracking(null),1800);
+    return()=>clearTimeout(timer);
+  },[state.faceBox]);
 
   function stop() {
-    generation.current++;
-    flow.current?.stop();
-    flow.current = null;
-    activeRequest.current?.abort();
-    stream.current?.getTracks().forEach(track => track.stop());
-    stream.current = null;
-    if (video.current) video.current.srcObject = null;
-    if (audio.current) {
-      audio.current.pause();
-      audio.current.currentTime = 0;
-    }
-    setCamera(false);
-    setStarting(false);
-    setTracking(null);
-    setState({ phase: 'disabled', feedback: 'Camera đã tắt. Bật lại để tiếp tục nhận diện.' });
+    generation.current++; flow.current?.stop(); flow.current=null; activeRequest.current?.abort();
+    stream.current?.getTracks().forEach(track=>track.stop()); stream.current=null;
+    if(video.current)video.current.srcObject=null;
+    if(audio.current){audio.current.pause();audio.current.currentTime=0;}
+    setCamera(false);setStarting(false);setTracking(null);
+    setState({phase:'disabled',feedback:'Camera đã tắt. Bật lại để tiếp tục.'});
   }
-
-  useEffect(() => {
-    stop();
-  }, [device?.id, device?.direction]);
-
-  useEffect(() => {
-    setRecent([]);
-  }, [device?.id, device?.direction]);
-
-  useEffect(() => {
-    if (state.phase === 'success' && state.receipt) {
-      const saved = state.receipt;
-      setRecent(previous => (previous.some(item => item.event_id === saved.event_id) ? previous : [saved, ...previous].slice(0, 6)));
-
-      // Haptic feedback for touch devices (iPad / tablet / phone)
-      if (typeof navigator.vibrate === 'function') {
-        navigator.vibrate([60, 40, 100]);
-      }
-
-      // Play audio "Hợp lệ" and welcome employee
-      playHopLeSound(saved.employee_name);
+  useEffect(()=>{stop();},[device?.id,device?.direction]);
+  useEffect(()=>{const owner=connectCameraOwner(stop);cameraOwner.current=owner;return()=>{owner.close();cameraOwner.current=null;};},[]);
+  useEffect(()=>{setRecent([]);},[device?.id,device?.direction]);
+  useEffect(()=>{
+    if(state.phase==='success'&&state.receipt?.status==='recorded'){
+      const saved=state.receipt;
+      setRecent(previous=>previous.some(item=>item.event_id===saved.event_id)?previous:[saved,...previous].slice(0,6));
     }
-  }, [state.phase, state.receipt]);
-
-  useEffect(() => {
-    const key = `kiosk-announced:${device?.id || 'unpaired'}`;
-    let ids: string[] = [];
-    try {
-      const saved = JSON.parse(sessionStorage.getItem(key) || '[]');
-      if (Array.isArray(saved)) ids = saved.filter((id: unknown) => typeof id === 'string');
-    } catch {
-      // ignore
-    }
-    announcement.current = new KioskAnnouncement(ids, values => {
-      try {
-        sessionStorage.setItem(key, JSON.stringify(values));
-      } catch {
-        // ignore
-      }
+  },[state.phase,state.receipt]);
+  useEffect(()=>{
+    const key=`kiosk-announced:${device?.id||'unpaired'}`;
+    let ids:string[]=[];
+    try{const saved=JSON.parse(sessionStorage.getItem(key)||'[]');if(Array.isArray(saved))ids=saved.filter((id:unknown)=>typeof id==='string');}catch{/* Audio history must not prevent recording. */}
+    announcement.current=new KioskAnnouncement(ids,values=>{try{sessionStorage.setItem(key,JSON.stringify(values));}catch{/* In-memory deduplication remains active. */}});
+  },[device?.id]);
+  useEffect(()=>{
+    if(state.phase!=='success'||!state.receipt||!audio.current)return;
+    const current=generation.current;
+    void announcement.current?.announce(state.receipt,async()=>{
+      const player=audio.current;if(!player)return;
+      player.muted=false;player.volume=1;player.currentTime=0;
+      try{await player.play();if(current===generation.current)setAudioMessage('');}
+      catch{if(current===generation.current)setAudioMessage('Chưa phát được giọng đọc. Mở “Tùy chọn” → “Thử giọng đọc” và kiểm tra âm lượng thiết bị.');}
     });
-  }, [device?.id]);
-
-  useEffect(() => {
-    if (state.phase !== 'success' || !state.receipt || !audio.current) return;
-    const current = generation.current;
-    void announcement.current?.announce(state.receipt, async () => {
-      const player = audio.current;
-      if (!player) return;
-      player.muted = false;
-      player.volume = 1;
-      player.currentTime = 0;
-      try {
-        await player.play();
-        if (current === generation.current) setAudioMessage('');
-      } catch {
-        // Voice fallback handled by SpeechSynthesis
-      }
-    });
-  }, [state.phase, state.receipt]);
-
-  useEffect(() => {
-    const visibility = () => {
-      if (document.hidden) stop();
-    };
-    document.addEventListener('visibilitychange', visibility);
-    return () => {
-      document.removeEventListener('visibilitychange', visibility);
-      generation.current++;
-      flow.current?.stop();
-      activeRequest.current?.abort();
-      stream.current?.getTracks().forEach(track => track.stop());
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!camera || !device?.paired || !device.active) return;
-    const key = `kiosk-pending:${device.id}`;
-    let controller: KioskFlow;
+  },[state.phase,state.receipt]);
+  useEffect(()=>{
+    const visibility=()=>{if(document.hidden)stop();};document.addEventListener('visibilitychange',visibility);
+    return()=>{document.removeEventListener('visibilitychange',visibility);generation.current++;flow.current?.stop();activeRequest.current?.abort();stream.current?.getTracks().forEach(track=>track.stop());};
+  },[]);
+  useEffect(()=>{
+    if(!camera||!device?.paired||!device.active)return;
+    const key=`kiosk-pending:${device.id}`;
+    let controller:KioskFlow;
     try {
-      controller = new KioskFlow({
-        enabled: () => !!(runtime.current.status?.attendance_enabled && runtime.current.device?.active && runtime.current.device?.paired),
-        load: () => sessionStorage.getItem(key),
-        save: id => {
-          if (id) sessionStorage.setItem(key, id);
-          else sessionStorage.removeItem(key);
-        },
-        uuid: () => crypto.randomUUID(),
-        now: () => performance.now(),
-        update: setState,
-        photo: async () => {
-          if (!video.current) throw new Error('Camera chưa sẵn sàng.');
-          return fullFramePhoto(video.current, runtime.current.status?.capture_max_edge ?? 1280);
-        },
-        request: async (path, options = {}) => {
-          const abort = new AbortController();
-          activeRequest.current = abort;
-          const timer = setTimeout(() => abort.abort(), 12000);
+      controller=new KioskFlow({
+        enabled:()=>kioskReadiness(runtime.current.status,runtime.current.device).canRecord,
+        load:()=>sessionStorage.getItem(key),save:id=>{if(id)sessionStorage.setItem(key,id);else sessionStorage.removeItem(key);},
+        uuid:()=>crypto.randomUUID(),now:()=>performance.now(),update:setState,
+        photo:async()=>{if(!video.current)throw new Error('Camera chưa sẵn sàng.');return fullFramePhoto(video.current,runtime.current.status?.capture_max_edge ?? 1280);},
+        request:async(path,options={})=>{
+          const abort=new AbortController();activeRequest.current=abort;
+          const timer=setTimeout(()=>abort.abort(),12000);
           try {
-            const response = await fetch(path, {
-              ...options,
-              headers: { 'Content-Type': 'application/json', ...options.headers },
-              signal: abort.signal,
-            });
-            let body;
-            try {
-              body = await response.json();
-            } catch {
-              throw new KioskError(503, 'Chưa nhận được kết quả hợp lệ. Đang kiểm tra lại yêu cầu.');
-            }
-            if (!response.ok) throw new KioskError(response.status, typeof body.detail === 'string' ? body.detail : 'Yêu cầu chưa hợp lệ.');
+            const response=await fetch(path,{...options,headers:{'Content-Type':'application/json',...options.headers},signal:abort.signal});
+            let body;try{body=await response.json();}catch{throw new KioskError(503,'Chưa nhận được kết quả hợp lệ. Đang kiểm tra lại yêu cầu.');}
+            if(!response.ok)throw new KioskError(response.status,typeof body.detail==='string'?body.detail:'Yêu cầu chưa hợp lệ. Đang kiểm tra lại.');
             return body;
-          } finally {
-            clearTimeout(timer);
-            if (activeRequest.current === abort) activeRequest.current = null;
-          }
+          } finally {clearTimeout(timer);if(activeRequest.current===abort)activeRequest.current=null;}
         },
       });
-      flow.current = controller;
-      void controller.step();
-    } catch {
-      setError('Trình duyệt chưa lưu được mã yêu cầu.');
-      return;
-    }
-    const timer = setInterval(() => void controller.step(), 600);
-    return () => {
-      clearInterval(timer);
-      controller.stop();
-      if (flow.current === controller) flow.current = null;
-      activeRequest.current?.abort();
-    };
-  }, [camera, device?.id, device?.direction, device?.paired, device?.active]);
+      flow.current=controller;void controller.step();
+    } catch {setError('Trình duyệt chưa lưu được mã yêu cầu. Cho phép lưu dữ liệu của trang để dùng chấm công.');return;}
+    const timer=setInterval(()=>void controller.step(),500);
+    return()=>{clearInterval(timer);controller.stop();if(flow.current===controller)flow.current=null;activeRequest.current?.abort();};
+  },[camera,device?.id,device?.direction,device?.paired,device?.active]);
 
   async function start(requestedFacing = facingMode) {
-    const current = ++generation.current;
-    setStarting(true);
-    setError('');
-
-    // Preload audio unlock on user touch
-    if (audio.current) {
-      const player = audio.current;
-      player.muted = true;
-      void player
-        .play()
-        .then(() => {
-          player.pause();
-          player.currentTime = 0;
-          player.muted = false;
-        })
-        .catch(() => {
-          player.muted = false;
-        });
-    }
-
+    const current=++generation.current;setStarting(true);setError('');
+    cameraOwner.current?.claim();
+    // Unlock this media element within the user's click on iPad/Android.
+    if(audio.current){const player=audio.current;player.muted=true;void player.play().then(()=>{if(player.muted){player.pause();player.currentTime=0;player.muted=false;}}).catch(()=>{player.muted=false;});}
     try {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('Camera yêu cầu HTTPS hoặc localhost an toàn.');
-      }
-      const media = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: requestedFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false,
-      });
-      if (current !== generation.current || !video.current) {
-        media.getTracks().forEach(track => track.stop());
-        return;
-      }
-      stream.current = media;
-      video.current.srcObject = media;
-      await video.current.play();
-      if (current !== generation.current) {
-        media.getTracks().forEach(track => track.stop());
-        return;
-      }
-      setCamera(true);
-      setState({
-        phase: enabled ? 'aligning' : 'disabled',
-        feedback: enabled ? 'Nhìn thẳng vào khung hình và giữ yên 1-2 giây.' : 'Camera tự dò mặt và kiểm tra chất lượng.',
-      });
-    } catch (err) {
-      if (current !== generation.current) return;
-      stream.current?.getTracks().forEach(track => track.stop());
-      stream.current = null;
-      setCamera(false);
-      if (video.current) video.current.srcObject = null;
-      setError(
-        err instanceof DOMException && err.name === 'NotAllowedError'
-          ? 'Chưa cấp quyền camera. Cho phép quyền camera trên trình duyệt hoặc dùng "Chấm công thử nghiệm (1-chạm)" bên dưới.'
-          : err instanceof Error
-            ? err.message
-            : 'Chưa mở được camera thiết bị.'
-      );
-    } finally {
-      if (current === generation.current) setStarting(false);
-    }
+      if(!navigator.mediaDevices?.getUserMedia)throw new Error('Camera cần localhost hoặc HTTPS tin cậy.');
+      await new Promise(resolve=>setTimeout(resolve,200));
+      if(current!==generation.current)return;
+      const media=await navigator.mediaDevices.getUserMedia({video:{facingMode:requestedFacing,width:{ideal:1280},height:{ideal:720}},audio:false});
+      if(current!==generation.current||!video.current){media.getTracks().forEach(track=>track.stop());return;}
+      stream.current=media;video.current.srcObject=media;await video.current.play();
+      if(current!==generation.current){media.getTracks().forEach(track=>track.stop());return;}
+      setCamera(true);setState({phase:enabled?'aligning':'disabled',feedback:enabled?'Nhìn thẳng và giữ yên. Camera sẽ chụp tự động.':'Camera tự tìm khuôn mặt và kiểm tra chất lượng; chưa ghi công.'});
+    } catch(error) {
+      if(current!==generation.current)return;
+      stream.current?.getTracks().forEach(track=>track.stop());stream.current=null;setCamera(false);
+      if(video.current)video.current.srcObject=null;
+      setError(error instanceof DOMException&&error.name==='NotAllowedError'?'Chưa được cấp quyền camera. Cho phép camera trong cài đặt trang rồi thử lại.':error instanceof DOMException&&error.name==='NotFoundError'?'Không tìm thấy camera trên thiết bị.':error instanceof Error?error.message:'Chưa mở được camera.');
+    } finally {if(current===generation.current)setStarting(false);}
   }
-
+  useEffect(()=>{
+    if(!status?.recognition_ready||!device?.paired||!device.active)return;
+    const key=`${device.id}:${device.direction}`;
+    if(autoAttempt.current===key)return;
+    autoAttempt.current=key;void start();
+    return()=>{autoAttempt.current='';};
+  },[status?.recognition_ready,device?.id,device?.direction,device?.paired,device?.active]);
   function toggleCameraFlip() {
-    const nextFacing = facingMode === 'user' ? 'environment' : 'user';
-    setFacingMode(nextFacing);
-    if (camera) {
-      stop();
-      setTimeout(() => void start(nextFacing), 200);
-    }
+    const next = facingMode === 'user' ? 'environment' : 'user';
+    setFacingMode(next);
+    if(camera) { stop(); void start(next); }
   }
-
-  // 1-touch demo punch simulation for testing on tablets without webcam
-  async function simulateDemoPunch(emp?: { code: string; name: string }) {
-    setDemoBusy(true);
-    const target = emp || demoEmployees[0] || { code: 'NV001', name: 'Nguyễn Văn An' };
-    setState({ phase: 'aligning', feedback: `Đang quét khuôn mặt ${target.name}…`, stableFrames: 1 });
-
-    setTimeout(() => {
-      setState({ phase: 'processing', feedback: 'So khớp đặc trưng sinh trắc học…', stableFrames: 2 });
-      setTimeout(async () => {
-        setState({ phase: 'committing', feedback: 'Đang ghi nhận lượt chấm công…', stableFrames: 3 });
-
-        try {
-          const reqId = `demo-${Date.now().toString(36)}`;
-          await fetch('/api/kiosk/recognition/sessions', {
-            method: 'POST',
-            body: JSON.stringify({ request_id: reqId }),
-          });
-
-          const receiptRes = await fetch(`/api/kiosk/attendance/${reqId}/commit`, {
-            method: 'POST',
-            body: '{}',
-          });
-          const receipt: Receipt = await receiptRes.json();
-          // Use chosen target employee
-          receipt.employee_code = target.code;
-          receipt.employee_name = target.name;
-          receipt.direction = device?.direction || 'in';
-
-          setState({
-            phase: 'success',
-            feedback: 'Đã hoàn tất chấm công.',
-            receipt,
-            stableFrames: 3,
-          });
-          setShowDemoModal(false);
-          setTimeout(() => {
-            setState({
-              phase: enabled ? 'aligning' : 'disabled',
-              feedback: enabled ? 'Nhìn thẳng vào khung hình và giữ yên 1-2 giây.' : 'Sẵn sàng ghi công.',
-            });
-          }, 3200);
-        } catch {
-          // Fallback receipt
-          const fallbackReceipt: Receipt = {
-            status: 'recorded',
-            request_id: `req-${Date.now()}`,
-            event_id: `evt-${Date.now()}`,
-            employee_code: target.code,
-            employee_name: target.name,
-            server_time: new Date().toISOString(),
-            direction: device?.direction || 'in',
-          };
-          setState({
-            phase: 'success',
-            feedback: 'Đã ghi nhận chấm công thành công.',
-            receipt: fallbackReceipt,
-            stableFrames: 3,
-          });
-          setShowDemoModal(false);
-          setTimeout(() => {
-            setState({
-              phase: enabled ? 'aligning' : 'disabled',
-              feedback: enabled ? 'Nhìn thẳng vào khung hình và giữ yên 1-2 giây.' : 'Sẵn sàng ghi công.',
-            });
-          }, 3200);
-        } finally {
-          setDemoBusy(false);
-        }
-      }, 700);
-    }, 700);
+  async function testAudio() {
+    const player = audio.current; if(!player)return;
+    player.muted=false;player.volume=1;player.currentTime=0;
+    try { await player.play();setAudioMessage('Đây là thử giọng đọc, không ghi chấm công.'); }
+    catch { setAudioMessage('Chưa phát được âm thanh. Kiểm tra âm lượng và quyền phát âm thanh.'); }
   }
-
-  useEffect(() => {
-    if (!status?.recognition_ready || !device?.paired || !device.active) return;
-    const key = `${device.id}:${device.direction}`;
-    if (autoAttempt.current === key) return;
-    autoAttempt.current = key;
-    void start();
-    return () => {
-      autoAttempt.current = '';
-    };
-  }, [status?.recognition_ready, device?.id, device?.direction, device?.paired, device?.active]);
-
   const receipt = state.receipt;
-  const feedback = !camera
-    ? 'Bật camera hoặc chạm "Chấm công thử nghiệm (1-chạm)" để kiểm tra luồng.'
+  const feedback = !readiness.canRecord ? readiness.feedback : !camera
+    ? 'Bấm “Bật camera” hoặc mở “Tùy chọn” để tiếp tục nhận diện.'
     : !device?.paired || !device.active
       ? 'Ghép quyền thiết bị để camera tự dò mặt.'
       : state.feedback;
@@ -446,13 +169,14 @@ export function KioskCapture({
       <div className="capture-top">
         <div className="capture-status-badge">
           <i className={camera ? 'online pulse' : ''} />
-          <span>{camera ? (facingMode === 'user' ? 'Camera trước · Đang quét' : 'Camera sau · Đang quét') : 'Camera chưa bật'}</span>
+          <span>{!readiness.canRecord ? readiness.title : camera ? (facingMode === 'user' ? 'Camera trước · Đang quét' : 'Camera sau · Đang quét') : 'Camera chưa bật'}</span>
         </div>
 
         <div className="capture-direction-switch">
           <button
             type="button"
             className={`direction-toggle-btn ${currentDir === 'in' ? 'active-in' : ''}`}
+            disabled={!device?.paired || directionBusy}
             onClick={() => onDirectionChange?.('in')}
             title="Chuyển sang chế độ Vào Ca"
           >
@@ -461,18 +185,28 @@ export function KioskCapture({
           <button
             type="button"
             className={`direction-toggle-btn ${currentDir === 'out' ? 'active-out' : ''}`}
+            disabled={!device?.paired || directionBusy}
             onClick={() => onDirectionChange?.('out')}
             title="Chuyển sang chế độ Ra Ca"
           >
             <span>↑</span> Ra ca
           </button>
         </div>
+        <button className="kiosk-options-button" aria-expanded={controlsOpen} aria-controls="kiosk-option-controls" onClick={()=>setControlsOpen(value=>!value)}>⚙ {controlsOpen?'Đóng tùy chọn':'Tùy chọn'}</button>
+        {controlsOpen && <div className="kiosk-option-controls" id="kiosk-option-controls" aria-label="Tùy chọn camera và thiết bị">
+          <button className="secondary-pill-btn" onClick={()=>camera||starting?stop():void start()}>{starting?'Hủy mở camera':camera?'Tắt camera':'Bật camera'}</button>
+          <button className="secondary-pill-btn" disabled={!camera} onClick={toggleCameraFlip}>Đổi camera trước/sau</button>
+          <button className="secondary-pill-btn" onClick={()=>setPairingOpen(true)}>Ghép thiết bị</button>
+          <button className="secondary-pill-btn" onClick={()=>void testAudio()}>Thử giọng đọc</button>
+        </div>}
       </div>
 
-      <audio ref={audio} src="/audio/hop-le-dut-khoat.wav" preload="auto" />
+      <audio ref={audio} src="/audio/hop-le-user-fast-135.wav" preload="auto" />
 
       {/* Main Viewfinder Frame */}
-      <div className={`camera-view ${camera ? 'active' : ''}`} style={{ aspectRatio: aspect }}>
+      <div ref={cameraView} className={`camera-view ${camera ? 'active' : ''}`} style={{ aspectRatio: aspect }}>
+
+        <div className="camera-scene" style={scene}>
         <video
           ref={video}
           muted
@@ -485,6 +219,15 @@ export function KioskCapture({
           }}
           aria-label="Toàn cảnh camera chấm công"
         />
+        {/* Real-time Bounding Box Overlays */}
+        {camera &&
+          shownBoxes.map((box, index) => (
+            <div key={index} className="kiosk-tracking-box" style={box} aria-label="Vị trí khuôn mặt phát hiện">
+              <span className="box-indicator">Đã định vị khuôn mặt</span>
+            </div>
+          ))}
+
+        </div>
 
         {/* Biometric Scanning Corners HUD */}
         <div className="scanner-hud-overlay" aria-hidden="true">
@@ -498,26 +241,16 @@ export function KioskCapture({
         {!camera && (
           <div className="kiosk-camera-placeholder">
             <div className="placeholder-icon">📷</div>
-            <strong>Camera Sẵn Sàng</strong>
-            <p>Bật camera thiết bị hoặc bấm nút thử nhanh để điểm danh</p>
+            <strong>{readiness.canRecord ? 'Camera Sẵn Sàng' : readiness.title}</strong>
+            <p>{readiness.canRecord ? 'Bật camera để tự động nhận diện và chấm công' : readiness.feedback}</p>
             <div className="placeholder-actions">
-              <button className="primary-pill-btn" onClick={() => void start()} disabled={starting}>
-                {starting ? 'Đang khởi động camera…' : 'Bật camera'}
-              </button>
-              <button className="secondary-pill-btn" onClick={() => setShowDemoModal(true)}>
-                ⚡ Thử nhận diện ngay
+              <button className="primary-pill-btn" onClick={() => readiness.code==='unpaired' ? setPairingOpen(true) : void start()} disabled={starting}>
+                {readiness.code==='unpaired' ? 'Ghép điểm chấm công' : starting ? 'Đang khởi động camera…' : 'Bật camera'}
               </button>
             </div>
           </div>
         )}
 
-        {/* Real-time Bounding Box Overlays */}
-        {camera &&
-          shownBoxes.map((box, index) => (
-            <div key={index} className="kiosk-tracking-box" style={box} aria-label="Vị trí khuôn mặt phát hiện">
-              <span className="box-indicator">Đã định vị khuôn mặt</span>
-            </div>
-          ))}
 
         {camera && (
           <div className="terminal-camera-label">
@@ -525,9 +258,7 @@ export function KioskCapture({
               <span className="live-dot" />
               <span>{device?.name || 'Điểm Chấm Công Tablet'}</span>
             </div>
-            <button className="camera-flip-btn" onClick={toggleCameraFlip} title="Đổi camera trước/sau trên tablet">
-              🔄 Đổi camera
-            </button>
+
           </div>
         )}
 
@@ -538,7 +269,7 @@ export function KioskCapture({
               <div className="celebration-badge-ring">
                 <span className="celebration-icon">✓</span>
               </div>
-              <span className="celebration-kicker">{receipt.status === 'duplicate' ? 'ĐÃ ĐIỂM DANH TRƯỚC ĐÓ' : 'ĐIỂM DANH THÀNH CÔNG'}</span>
+              <span className="celebration-kicker">{receipt.status === 'duplicate' ? receipt.direction === 'in' ? 'ĐÃ QUÉT VÀO CA' : 'ĐÃ QUÉT RA CA' : 'ĐIỂM DANH HỢP LỆ'}</span>
               <h2 className="celebration-name">{receipt.employee_name}</h2>
               <div className="celebration-details">
                 <span className="celebration-code">{receipt.employee_code}</span>
@@ -554,7 +285,7 @@ export function KioskCapture({
                   })}
                 </time>
               </div>
-              <p className="celebration-wish">Chúc bạn một ngày làm việc hiệu quả và nhiều niềm vui!</p>
+              <p className="celebration-wish">{receipt.status === 'duplicate' ? 'Giữ nguyên giờ đã ghi nhận. Không ghi thêm lượt.' : 'Chúc bạn một ngày làm việc hiệu quả và nhiều niềm vui!'}</p>
             </div>
           </div>
         )}
@@ -576,7 +307,7 @@ export function KioskCapture({
               ⏳
             </span>
             <strong>Sẵn sàng đón bạn</strong>
-            <p>Đứng trước camera để chấm công tự động trong 1 giây.</p>
+            <p>Đứng trước camera và giữ yên trong giây lát để tự động chấm công.</p>
           </div>
         ) : (
           <ol className="recent-punches-list">
@@ -609,7 +340,7 @@ export function KioskCapture({
             ))}
           </ol>
         )}
-        <p className="terminal-session-note">Dữ liệu được mã hóa và lưu tại máy chủ nội bộ.</p>
+        <p className="terminal-session-note">Kết quả được xác nhận và lưu tại máy chủ nội bộ.</p>
       </aside>
 
       {/* Bottom Bar Controls & Progress */}
@@ -621,7 +352,7 @@ export function KioskCapture({
 
           <div className="kiosk-progress">
             <div className="progress-title-row">
-              <strong>{receipt && state.phase === 'success' ? 'Đã xác thực hợp lệ' : camera ? titles[state.phase] : 'Chấm công sẵn sàng'}</strong>
+              <strong>{receipt && state.phase === 'success' ? receipt.status === 'duplicate' ? receipt.direction === 'in' ? 'Đã quét vào ca' : 'Đã quét ra ca' : 'Đã xác thực hợp lệ' : !readiness.canRecord ? readiness.title : camera ? titles[state.phase] : 'Chấm công sẵn sàng'}</strong>
 
               {/* 3 Steps indicator */}
               {camera && state.phase !== 'success' && (
@@ -637,18 +368,6 @@ export function KioskCapture({
           </div>
         </div>
 
-        <div className="terminal-actions">
-          {!camera && (
-            <button className="primary-touch-btn" onClick={() => void start()} disabled={starting}>
-              {starting ? 'Đang mở camera…' : '📷 Bật camera nhận diện'}
-            </button>
-          )}
-
-          <button className="secondary-touch-btn" onClick={() => setShowDemoModal(true)}>
-            ⚡ Thử điểm danh 1-chạm
-          </button>
-        </div>
-
         {error && (
           <div className="error" role="alert">
             {error}
@@ -657,45 +376,7 @@ export function KioskCapture({
         {audioMessage && <p className="audio-feedback">{audioMessage}</p>}
       </div>
 
-      {/* Demo Modal for Fast Tablet Testing */}
-      {showDemoModal && (
-        <div className="demo-modal-backdrop" onClick={() => setShowDemoModal(false)}>
-          <div className="demo-modal-dialog" onClick={e => e.stopPropagation()}>
-            <div className="demo-modal-header">
-              <div>
-                <h3>Chấm công thử nghiệm (1-chạm)</h3>
-                <p>Kiểm tra quy trình nhận diện và bảng công ngay lập tức</p>
-              </div>
-              <button className="modal-close-btn" onClick={() => setShowDemoModal(false)}>
-                ✕
-              </button>
-            </div>
-
-            <div className="demo-modal-body">
-              <p className="demo-hint">Chọn bất kỳ nhân viên nào bên dưới để mô phỏng lượt chấm công:</p>
-              <div className="demo-employee-grid">
-                {demoEmployees.map(emp => (
-                  <button
-                    key={emp.id}
-                    className="demo-emp-card"
-                    disabled={demoBusy}
-                    onClick={() => void simulateDemoPunch(emp)}
-                  >
-                    <div className="demo-avatar">{emp.name.split(' ').slice(-1)[0][0]}</div>
-                    <div className="demo-emp-info">
-                      <strong>{emp.name}</strong>
-                      <span>
-                        {emp.code} · {emp.department}
-                      </span>
-                    </div>
-                    <span className="demo-arrow">→</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {pairingOpen && <div className="demo-modal-backdrop" onClick={()=>setPairingOpen(false)}><div className="demo-modal-dialog kiosk-pairing-dialog" role="dialog" aria-modal="true" aria-labelledby="pair-kiosk-title" onClick={e=>e.stopPropagation()}><div className="demo-modal-header"><div><h3 id="pair-kiosk-title">Ghép quyền chấm công cho trình duyệt</h3><p>Lấy mã tại Quản trị → Thiết bị Kiosk.</p></div><button className="modal-close-btn" aria-label="Đóng ghép kiosk" onClick={()=>setPairingOpen(false)}>✕</button></div><div className="demo-modal-body"><PairingPanel initiallyOpen allowRePair onDevice={next=>onDeviceChange?.(next)} onPaired={()=>setPairingOpen(false)}/><a className="primary-pill-btn" href="#admin/devices">Lấy mã ghép 8 số trong Quản trị → Thiết bị Kiosk</a></div></div></div>}
     </section>
   );
 }

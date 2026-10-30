@@ -1,4 +1,5 @@
 import { EmployeePhotoPicker } from './EmployeePhotoPicker';
+import { PartnerAdminPanel } from './PartnerAdminPanel';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { BiometricsPanel } from './BiometricsPanel';
 import { CalibrationPanel } from './CalibrationPanel';
@@ -15,6 +16,7 @@ type Employee = {
   name: string;
   department: string;
   active: boolean;
+  deleted_at?: string | null;
   template_count: number;
   collection_count?: number;
   imported_photo_count?: number;
@@ -38,7 +40,7 @@ function message(detail: unknown): string {
 
 export function AdminPanel() {
   const [auth, setAuth] = useState<Auth | null>(null);
-  const [section, setSection] = useState<'overview' | 'employees' | 'devices' | 'calibration' | 'shifts' | 'timesheets' | 'operations'>('overview');
+  const [section, setSection] = useState<'overview' | 'employees' | 'devices' | 'calibration' | 'shifts' | 'timesheets' | 'operations' | 'partners'>(location.hash === '#admin/devices' ? 'devices' : location.hash === '#admin/partners' ? 'partners' : 'overview');
   const [collecting, setCollecting] = useState<Employee | null>(null);
   const [managingBiometrics, setManagingBiometrics] = useState<Employee | null>(null);
   const [initializing, setInitializing] = useState(true);
@@ -56,13 +58,16 @@ export function AdminPanel() {
   const [refresh, setRefresh] = useState(0);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<Employee | 'new' | null>(null);
+  const [deleting, setDeleting] = useState<Employee | null>(null);
   const [draft, setDraft] = useState<Draft>({ code: '', name: '', department: '', active: true });
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [departments, setDepartments] = useState<string[]>([]);
   const [customDepartment, setCustomDepartment] = useState(false);
-  const [recentPunches, setRecentPunches] = useState<any[]>([]);
+  const [dashboard, setDashboard] = useState<{ employee_total:number; employee_active:number; attendance_today:number; paired_devices:number; online_devices:number; timezone:string; recent:{id:string;employee_code:string;employee_name:string;direction:string;occurred_at:string;kind:string}[] } | null>(null);
+  const recentPunches = dashboard?.recent ?? [];
 
   const dialog = useRef<HTMLDialogElement>(null);
+  const deleteDialog = useRef<HTMLDialogElement>(null);
   const importInput = useRef<HTMLInputElement>(null);
 
   async function request(url: string, options: RequestInit = {}) {
@@ -108,13 +113,14 @@ export function AdminPanel() {
 
   // Fetch employee list
   useEffect(() => {
-    if (!auth || (section !== 'employees' && section !== 'overview')) return;
+    if (!auth || section !== 'employees') return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams({ q, offset: String(page * 30), limit: '30' });
-        if (active !== 'all') params.set('active', active);
+        if (active === 'deleted') params.set('deleted', 'true');
+        else if (active !== 'all') params.set('active', active);
         const result = await request('/api/admin/employees?' + params, { signal: controller.signal });
         if (!controller.signal.aborted) setData(result);
       } catch (e) {
@@ -129,21 +135,40 @@ export function AdminPanel() {
     };
   }, [auth, section, q, active, page, refresh]);
 
-  // Load recent punches for Overview
   useEffect(() => {
     if (!auth || section !== 'overview') return;
-    fetch('/api/admin/timesheets/corrections/entries')
-      .then(r => r.json())
-      .then(d => {
-        if (d?.items) setRecentPunches(d.items.slice(0, 8));
-      })
-      .catch(() => {});
+    const controller = new AbortController(); setDashboard(null); setError('');
+    const load = async () => {
+      try { const body = await request('/api/admin/dashboard', {signal:controller.signal}); if(!controller.signal.aborted)setDashboard(body); }
+      catch(e) { if(!controller.signal.aborted)setError(e instanceof Error ? e.message : 'Chưa đọc được tổng quan.'); }
+    };
+    void load(); const timer = setInterval(load,15000);
+    return () => { controller.abort(); clearInterval(timer); };
   }, [auth, section, refresh]);
 
   useEffect(() => {
     if (editing && dialog.current && !dialog.current.open) dialog.current.showModal();
     if (!editing) dialog.current?.close();
   }, [editing]);
+
+  useEffect(() => {
+    if (deleting && deleteDialog.current && !deleteDialog.current.open) deleteDialog.current.showModal();
+    if (!deleting) deleteDialog.current?.close();
+  }, [deleting]);
+
+  async function deleteEmployee() {
+    if (!deleting || busy) return;
+    setBusy(true); setError(''); setSuccess('');
+    try {
+      await request(`/api/admin/employees/${deleting.id}`, { method: 'DELETE' });
+      setDeleting(null);
+      setSuccess('Đã xóa nhân viên khỏi danh sách sử dụng và ngừng nhận diện. Lịch sử chấm công được giữ nguyên.');
+      if (data.items.length === 1 && page > 0) setPage(value => value - 1);
+      setRefresh(value => value + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Chưa xóa được nhân viên.');
+    } finally { setBusy(false); }
+  }
 
   async function authenticate(event: FormEvent) {
     event.preventDefault();
@@ -184,57 +209,56 @@ export function AdminPanel() {
   }
 
   function openEmployee(employee: Employee | 'new') {
-    setDraft(
-      employee === 'new'
-        ? { code: '', name: '', department: '', active: true }
-        : { code: employee.code, name: employee.name, department: employee.department, active: employee.active }
-    );
-    setPhoto(null);
-    setCustomDepartment(false);
-    setError('');
-    setSuccess('');
-    setEditing(employee);
-    void request('/api/admin/employees/departments')
-      .then(result => setDepartments(result.items))
-      .catch(() => setDepartments(['Công nghệ thông tin', 'Kế toán tài chính', 'Kinh doanh', 'Nhân sự', 'Vận hành kho']));
+
+    setDraft(employee === 'new' ? { code: '', name: '', department: '', active: true } : { code: employee.code, name: employee.name, department: employee.department, active: employee.active });
+
+    setPhoto(null); setCustomDepartment(false);
+
+    setError(''); setSuccess(''); setEditing(employee);
+
+    void request('/api/admin/employees/departments').then(result => setDepartments(result.items)).catch(e => setError(e.message));
+
   }
 
+
+
   async function saveEmployee(event: FormEvent) {
-    event.preventDefault();
-    setBusy(true);
-    setError('');
+
+    event.preventDefault(); setBusy(true); setError('');
+
     try {
+
       const creating = editing === 'new';
+
       const payload = creating ? draft : { name: draft.name, department: draft.department, active: draft.active };
-      const saved = await request('/api/admin/employees' + (creating ? '' : '/' + (editing as Employee).id), {
-        method: creating ? 'POST' : 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+
+      const saved = await request('/api/admin/employees' + (creating ? '' : '/' + (editing as Employee).id), { method: creating ? 'POST' : 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+      // Metadata may have committed before photo upload; retry must edit that ID.
+
       setEditing(saved);
+
       let photoMessage = '';
+
       if (photo) {
-        try {
-          const result = await request(`/api/admin/employees/${saved.id}/photo`, {
-            method: 'PUT',
-            headers: { 'Content-Type': photo.type },
-            body: photo,
-          });
-          photoMessage = ' ' + (result?.recognition?.message || 'Đã cập nhật ảnh hồ sơ.');
-        } catch {
-          // ignore photo upload failure
-        }
+
+        const result = await request(`/api/admin/employees/${saved.id}/photo`, { method: 'PUT', headers: { 'Content-Type': photo.type }, body: photo });
+
+        photoMessage = ' ' + result.recognition.message;
+
         setPhoto(null);
+
       }
-      setEditing(null);
-      setRefresh(r => r + 1);
-      setSuccess((creating ? 'Đã thêm hồ sơ nhân viên thành công.' : 'Đã cập nhật hồ sơ nhân viên.') + photoMessage);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Không lưu được hồ sơ.');
-    } finally {
-      setBusy(false);
-    }
+
+      setEditing(null); setRefresh(r => r + 1); setSuccess((creating ? 'Đã thêm hồ sơ nhân viên.' : 'Đã cập nhật hồ sơ nhân viên.') + photoMessage);
+
+    } catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được hồ sơ.'); }
+
+    finally { setBusy(false); }
+
   }
+
+
 
   async function importCsv(file?: File) {
     if (!file) return;
@@ -310,7 +334,7 @@ export function AdminPanel() {
               placeholder="••••••••"
             />
           </label>
-          <p className="auth-demo-hint">Gợi ý đăng nhập nhanh: Nhập tài khoản <code>admin</code> / bất kỳ mật khẩu nào.</p>
+          <p className="auth-demo-hint">Sử dụng tài khoản quản trị đã thiết lập trên máy chủ nội bộ.</p>
           <button className="primary-touch-btn" disabled={busy}>
             {busy ? 'Đang xử lý…' : setup ? 'Tạo tài khoản quản trị' : 'Đăng nhập quản trị'}
           </button>
@@ -319,7 +343,7 @@ export function AdminPanel() {
     );
   }
 
-  const activeCount = data.items.filter(e => e.active).length;
+  const activeCount = dashboard?.employee_active ?? '—';
 
   return (
     <section className="admin-panel">
@@ -340,7 +364,7 @@ export function AdminPanel() {
                       ? 'Bảng công & Điểm danh'
                       : section === 'operations'
                         ? 'Vận hành hệ thống'
-                        : 'Kiểm chứng nhận diện AI'}
+                        : section === 'partners' ? 'Chấm công đối tác' : 'Kiểm chứng nhận diện AI'}
           </h1>
         </div>
 
@@ -366,6 +390,9 @@ export function AdminPanel() {
         <button className={section === 'employees' ? 'selected' : ''} onClick={() => setSection('employees')}>
           👥 Nhân viên
         </button>
+        <button className={section === 'partners' ? 'selected' : ''} onClick={() => setSection('partners')}>
+          🤝 Chấm công đối tác
+        </button>
         <button className={section === 'shifts' ? 'selected' : ''} onClick={() => setSection('shifts')}>
           ⏱️ Ca & Lịch
         </button>
@@ -386,13 +413,14 @@ export function AdminPanel() {
       {/* Tab Panels */}
       {section === 'overview' ? (
         <div className="admin-overview-view">
+          {error && <div className="error" role="alert">{error}</div>}
           {/* KPI Statistic Cards */}
           <div className="overview-kpi-grid">
             <div className="kpi-card">
               <div className="kpi-icon-wrap bg-blue">👥</div>
               <div className="kpi-content">
                 <span className="kpi-label">Tổng nhân sự</span>
-                <strong className="kpi-value">{data.total || data.items.length}</strong>
+                <strong className="kpi-value">{dashboard?.employee_total ?? '—'}</strong>
                 <span className="kpi-subtext">Đã ghi nhận trên hệ thống</span>
               </div>
             </div>
@@ -402,7 +430,7 @@ export function AdminPanel() {
               <div className="kpi-content">
                 <span className="kpi-label">Đang hoạt động</span>
                 <strong className="kpi-value">{activeCount}</strong>
-                <span className="kpi-subtext">Sẵn sàng chấm công AI</span>
+                <span className="kpi-subtext">Nhân sự đang làm việc</span>
               </div>
             </div>
 
@@ -410,7 +438,7 @@ export function AdminPanel() {
               <div className="kpi-icon-wrap bg-amber">🕒</div>
               <div className="kpi-content">
                 <span className="kpi-label">Lượt điểm danh gần nhất</span>
-                <strong className="kpi-value">{recentPunches.length}</strong>
+                <strong className="kpi-value">{dashboard?.attendance_today ?? '—'}</strong>
                 <span className="kpi-subtext">Trong ngày hôm nay</span>
               </div>
             </div>
@@ -419,8 +447,8 @@ export function AdminPanel() {
               <div className="kpi-icon-wrap bg-purple">🛡️</div>
               <div className="kpi-content">
                 <span className="kpi-label">Trạng thái Kiosk</span>
-                <strong className="kpi-value">Trực tuyến</strong>
-                <span className="kpi-subtext">Camera cửa chính kết nối</span>
+                <strong className="kpi-value">{dashboard ? dashboard.online_devices ? 'Trực tuyến' : dashboard.paired_devices ? 'Chờ kết nối' : 'Chưa ghép' : '—'}</strong>
+                <span className="kpi-subtext">{dashboard ? `${dashboard.online_devices}/${dashboard.paired_devices} điểm đang liên lạc` : 'Đang đọc trạng thái'}</span>
               </div>
             </div>
           </div>
@@ -447,7 +475,7 @@ export function AdminPanel() {
           {/* Recent Attendance Activity Stream */}
           <div className="overview-recent-section">
             <div className="section-header-row">
-              <h3>Điểm danh gần đây trên thiết bị</h3>
+              <h3>Điểm danh gần đây trên hệ thống</h3>
               <button className="text-button" onClick={() => setSection('timesheets')}>
                 Xem toàn bộ bảng công →
               </button>
@@ -482,7 +510,7 @@ export function AdminPanel() {
                           {new Date(p.occurred_at).toLocaleTimeString('vi-VN', {
                             hour: '2-digit',
                             minute: '2-digit',
-                            second: '2-digit',
+                            second: '2-digit', timeZone: dashboard?.timezone || 'Asia/Ho_Chi_Minh',
                           })}
                         </time>
                       </td>
@@ -504,6 +532,8 @@ export function AdminPanel() {
             </div>
           </div>
         </div>
+      ) : section === 'partners' ? (
+        <PartnerAdminPanel csrf={auth.csrf_token} onUnauthorized={() => setAuth(null)} />
       ) : section === 'operations' ? (
         <OperationsPanel csrf={auth.csrf_token} onUnauthorized={() => setAuth(null)} />
       ) : section === 'timesheets' ? (
@@ -575,6 +605,7 @@ export function AdminPanel() {
                 <option value="all">Tất cả nhân sự</option>
                 <option value="true">Đang làm việc</option>
                 <option value="false">Ngừng làm việc</option>
+                <option value="deleted">Đã xóa — tra cứu lịch sử</option>
               </select>
             </label>
 
@@ -633,12 +664,12 @@ export function AdminPanel() {
                     </td>
                     <td>
                       <span className={'status-label ' + (employee.active ? 'valid' : 'inactive')}>
-                        {employee.active ? 'Hoạt động' : 'Đã ngừng'}
+                        {employee.deleted_at ? 'Đã xóa' : employee.active ? 'Hoạt động' : 'Đã ngừng'}
                       </span>
                     </td>
                     <td>
                       <div className="table-actions-cell">
-                        <button className="text-button" onClick={() => openEmployee(employee)}>
+                        <button className="text-button" onClick={() => openEmployee(employee)} disabled={!!employee.deleted_at || busy}>
                           Sửa
                         </button>
                         <button className="text-button" onClick={() => setCollecting(employee)} disabled={!employee.active}>
@@ -647,6 +678,9 @@ export function AdminPanel() {
                         <button className="text-button" onClick={() => setManagingBiometrics(employee)}>
                           Sinh trắc học
                         </button>
+                        {!employee.deleted_at && <button className="text-button danger" disabled={busy} onClick={() => { setError(''); setDeleting(employee); }}>
+                          Xóa
+                        </button>}
                       </div>
                     </td>
                   </tr>
@@ -679,6 +713,19 @@ export function AdminPanel() {
               </button>
             </div>
           </div>
+
+          <dialog ref={deleteDialog} onCancel={event => { if (busy) event.preventDefault(); else setDeleting(null); }}>
+            <div className="employee-form">
+              <h2>Xóa nhân viên</h2>
+              <p>Xóa hồ sơ <strong>{deleting?.code} — {deleting?.name}</strong> khỏi danh sách sử dụng và ngừng nhận diện chấm công?</p>
+              <p>Lịch sử chấm công và thông tin đối chiếu được giữ nguyên. Có thể tra cứu tại bộ lọc “Đã xóa”.</p>
+              {error && <p className="error" role="alert">{error}</p>}
+              <div className="form-actions">
+                <button className="secondary" disabled={busy} onClick={() => setDeleting(null)}>Hủy</button>
+                <button className="danger" disabled={busy} onClick={() => void deleteEmployee()}>{busy ? 'Đang xóa…' : 'Xóa nhân viên'}</button>
+              </div>
+            </div>
+          </dialog>
 
           {/* Add / Edit Employee Dialog */}
           <dialog

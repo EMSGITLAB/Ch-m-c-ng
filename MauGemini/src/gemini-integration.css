@@ -1,0 +1,9 @@
+/* Preserve the supplied design; keep the header within an iPad portrait viewport. */
+@media (min-width: 641px) and (max-width: 900px) {
+  .app-header { flex-wrap: wrap; }
+  .app-header .view-nav { order: 3; flex-basis: 100%; justify-content: center; }
+  .app-header .header-right-actions { margin-left: auto; }
+}
+
+.terminal-capture .capture-top{flex-wrap:wrap;gap:10px}.kiosk-options-button{min-height:34px;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.06);color:#e2e8f0;font-size:12px;box-shadow:none}.kiosk-option-controls{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}.kiosk-option-controls .secondary-pill-btn{font-size:12px;min-height:38px;padding:8px 12px}.kiosk-pairing-dialog{background:#fff;color:#0f172a}.kiosk-pairing-dialog .pairing-panel summary{font-weight:700;cursor:pointer}.kiosk-pairing-dialog .pairing-panel form{margin:16px 0}.kiosk-pairing-dialog .error{margin-top:12px}.kiosk-pairing-dialog a{margin-top:16px;display:inline-flex}
+.admin-panel .text-button.danger{color:#b91c1c}.admin-panel .text-button.danger:hover{background:#fef2f2}.admin-panel button.danger:not(.text-button){background:#b91c1c;border-color:#b91c1c;color:#fff}
